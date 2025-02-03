@@ -4,7 +4,6 @@ const request = async (
   endpoint,
   method = 'GET',
   body = null,
-  isAuthRequest = false,
 ) => {
   // Récupérer le token
   // Définir les en-têtes
