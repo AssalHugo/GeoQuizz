@@ -9,7 +9,7 @@ CREATE TABLE "Game" (
 CREATE TABLE "user" (
   "id" UUID PRIMARY KEY,
   "nickname" varchar,
-  "auth_id" UUID
+  "email" varchar
 );
 
 ALTER TABLE "Game" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
