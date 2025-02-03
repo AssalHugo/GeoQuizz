@@ -8,6 +8,7 @@ services:
   adminer:
     image: adminer
     ports:
+      # - 32501:8080
       - 1001:8080
 
   gateway.geoquizz:
@@ -22,8 +23,19 @@ services:
     working_dir: /var/php
     command: php -S 0.0.0.0:80 -t public
 
-  # api.geoquizz:
-  #   build:
-  #     context: build
-  #     dockerfile: Dockerfile_Principal
+  api.geoquizz:
+    build:
+      context: build
+      dockerfile: Dockerfile_Principal
+    env_file:
+      - ./geoquizz.env
+    ports:
+      # - 32502:80
+      - 1002:80
+    volumes:
+      - ./Backend/app-geoquizz:/var/php
+    working_dir: /var/php
+    depends_on:
+      - geoquizz.db
+    command: php -S 0.0.0.0:80 -t public
     
