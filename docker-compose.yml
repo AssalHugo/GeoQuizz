@@ -1,16 +1,4 @@
 services:
-  gateway.geoquizz:
-    build:
-      context: build
-      dockerfile: Dockerfile_Principal
-    ports:
-      # - 32500:80
-      - 1000:80
-    volumes:
-      - ./Backend/app-gateway:/var/php
-    working_dir: /var/php
-    command: php -S 0.0.0.0:80 -t public
-
   geoquizz.db:
     image: "postgres:latest"
     env_file: ./geoquizzdb.env
@@ -21,3 +9,21 @@ services:
     image: adminer
     ports:
       - 1001:8080
+
+  gateway.geoquizz:
+    build:
+      context: build
+      dockerfile: Dockerfile_Gateway
+    ports:
+      # - 32500:80
+      - 1000:80
+    volumes:
+      - ./Backend/app-gateway:/var/php
+    working_dir: /var/php
+    command: php -S 0.0.0.0:80 -t public
+
+  # api.geoquizz:
+  #   build:
+  #     context: build
+  #     dockerfile: Dockerfile_Principal
+    
