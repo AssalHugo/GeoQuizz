@@ -42,3 +42,7 @@ const request = async (
     throw error;
   }
 };
+
+export function getGamesUser(userId) {
+  return request(`/users/${userId}/games`);
+}
