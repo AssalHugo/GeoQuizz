@@ -46,3 +46,7 @@ const request = async (
 export function getGamesUser(userId) {
   return request(`/users/${userId}/games`);
 }
+
+export function login(username, password) {
+  return request('/auth/login', 'POST', {username, password});
+}

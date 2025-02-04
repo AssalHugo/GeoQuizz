@@ -1,5 +1,6 @@
 <script>
 import { useUserStore } from '@/stores/userStore.js'
+import { getGamesUser } from '@/services/httpClient.js'
 
 export default {
   data() {
@@ -7,6 +8,12 @@ export default {
       userStore: useUserStore(),
       games: [],
     }
+  },
+
+  mounted() {
+    getGamesUser().then((games) => {
+      this.games = games
+    })
   },
 }
 </script>
