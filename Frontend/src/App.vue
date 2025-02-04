@@ -1,6 +1,5 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-
 import { useUserStore } from '@/stores/userStore.js'
 
 let userStore = useUserStore()
@@ -14,11 +13,14 @@ let userStore = useUserStore()
       </RouterLink>
 
       <nav class="flex space-x-4">
-        <RouterLink to="/profile" class="text-lg hover:text-blue-200 transition">Profile</RouterLink>
+        <RouterLink to="/profile" class="text-lg hover:text-blue-200 transition"
+          >Profile
+        </RouterLink>
         <RouterLink to="/login">
           <button
             @click="userStore.logout"
-            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full shadow-md transition">
+            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full shadow-md transition"
+          >
             Logout
           </button>
         </RouterLink>
@@ -31,8 +33,10 @@ let userStore = useUserStore()
 
       <nav class="flex space-x-4">
         <RouterLink to="/login" class="text-lg hover:text-blue-200 transition">Login</RouterLink>
-        <RouterLink to="/register"
-                    class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full shadow-md transition">
+        <RouterLink
+          to="/register"
+          class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full shadow-md transition"
+        >
           Register
         </RouterLink>
       </nav>
@@ -41,7 +45,7 @@ let userStore = useUserStore()
 
   <main class="py-8 bg-gray-100 min-h-screen">
     <div class="container mx-auto px-4">
-      <RouterView/>
+      <RouterView />
     </div>
   </main>
 
@@ -55,13 +59,5 @@ let userStore = useUserStore()
 body {
   font-family: 'Inter', sans-serif;
   background-color: #f3f4f6;
-}
-
-.centered-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 1rem;
 }
 </style>
