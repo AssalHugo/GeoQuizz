@@ -11,6 +11,7 @@ CREATE TABLE "photo" (
   "photo" varchar,
   "latitude" decimal,
   "longitude" decimal,
+  "adresse" varchar,
   "serie_id" int
 );
 
