@@ -16,7 +16,7 @@ class GameService implements GameServiceInterface {
         $game = new Game();
         $game->setUserId($userId);
         $game->setSerie($serie);
-        $game->setStatus('CREATED');
+        $game->setState('CREATED');
         $this->gameRepository->save($game);
         return $game;
     }
