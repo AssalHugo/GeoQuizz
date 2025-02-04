@@ -2,11 +2,10 @@
 
 namespace api_geoquizz\core\domain\entities\geoquizz;
 
-use api_geoquizz\core\domain\entities\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
-class Game extends Entity {
+class Game {
     #[ORM\Column(type: Types::STRING, length: 48)]
     private string $id;
 
@@ -24,7 +23,7 @@ class Game extends Entity {
     private int $score = 0;
 
     #[ORM\Column(type: Types::STRING, length: 48)]
-    private string $status;
+    private string $state;
 
     // Getters
     public function getId(): string
@@ -47,13 +46,18 @@ class Game extends Entity {
         return $this->score;
     }
 
-    public function getStatus(): string
+    public function getState(): string
     {
-        return $this->status;
+        return $this->state;
     }
 
     // Setters
 
+    public function setId(string $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
     public function setUserId(string $userId): self
     {
         $this->userId = $userId;
@@ -76,9 +80,9 @@ class Game extends Entity {
         return $this;
     }
 
-    public function setStatus(string $status): self
+    public function setState(string $state): self
     {
-        $this->status = $status;
+        $this->state = $state;
         return $this;
     }
 }
