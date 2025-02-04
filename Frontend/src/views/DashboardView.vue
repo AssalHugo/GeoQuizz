@@ -1,6 +1,6 @@
 <script>
 import { useUserStore } from '@/stores/userStore.js'
-import { getGamesUser } from '@/services/httpClient.js'
+import { getGamesUser, createGame, joinGame } from '@/services/httpClient.js'
 
 export default {
   data() {
@@ -9,7 +9,14 @@ export default {
       games: [],
     }
   },
-
+  methods: {
+    joinGame(id) {
+      joinGame(id).then(() => {
+        this.$router.push(`/game/${id}`)
+      })
+    },
+    createGame,
+  },
   mounted() {
     getGamesUser().then((games) => {
       this.games = games
@@ -50,16 +57,10 @@ export default {
               </div>
               <div class="flex space-x-2">
                 <button
-                  @click="joinGame(game)"
+                  @click="joinGame(game.id)"
                   class="bg-blue-500 text-white py-1 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   Rejoindre
-                </button>
-                <button
-                  @click="deleteGame(game.id)"
-                  class="bg-red-500 text-white py-1 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                >
-                  Supprimer
                 </button>
               </div>
             </div>

@@ -79,3 +79,7 @@ export function register(nickname, email, password) {
 export function createGame() {
   return request('/games', 'POST')
 }
+
+export function joinGame(gameId) {
+  return request(`/games/${gameId}/start`, 'PUT')
+}

@@ -1,3 +1,34 @@
+<script>
+import { register } from "@/services/httpClient.js";
+
+export default {
+  data() {
+    return {
+      nickname: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      error: null,
+    };
+  },
+  methods: {
+    handleRegister() {
+      if (this.password !== this.confirmPassword) {
+        this.error = "Passwords do not match";
+        return;
+      }
+      register(this.nickname, this.email, this.password)
+        .then(() => {
+          this.$router.push("/login");
+        })
+        .catch((error) => {
+          this.error = error.response.message;
+        });
+    },
+  },
+}
+</script>
+
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -35,3 +66,7 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+
+</style>
