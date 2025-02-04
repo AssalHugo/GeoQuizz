@@ -18,7 +18,9 @@ class ServiceGeoquizzAdapter implements ServiceGeoquizzInterface
     public function createUser(UserDTO $user): UserDTO
     {
         $response = $this->client->post("/users", [
-            'user' => $user
+            'id' => $user->id,
+            'email' => $user->email,
+            'nickname' => $user->nickname
         ]);
         $data = json_decode($response->getBody()->getContents(), true);
         return new UserDTO($data['id'], $data['nickname'], $data['email']);
