@@ -65,8 +65,4 @@ export default {
   </div>
 </template>
 
-<style scoped>
-.mt-12 {
-  margin-top: 3rem;
-}
-</style>
+<style scoped></style>
