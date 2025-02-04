@@ -2,11 +2,11 @@
 
 namespace api_geoquizz\core\domain\entities\geoquizz;
 
-use api_geoquizz\core\domain\entities\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
-class User extends Entity {
+class User {
+
     #[ORM\Column(type: Types::STRING, length: 48)]
     private string $id;
     #[ORM\Column(type: Types::STRING, length: 48)]
@@ -28,6 +28,23 @@ class User extends Entity {
         return $this->email;
     }
 
+    // Setters
+    public function setNickName(string $nickname): self
+    {
+        $this->nickname = $nickname;
+        return $this;
+    }
 
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    public function setID(string $id):self
+    {
+        $this->id = $id;
+        return $this;
+    }
 
 }
