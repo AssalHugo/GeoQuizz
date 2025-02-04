@@ -1,9 +1,9 @@
 <?php
 
-namespace api_geoquizz\core\domain\services;
+namespace api_geoquizz\core\services;
 
-use api_geoquizz\core\domain\entities\Game;
-use  api_geoquizz\core\domain\repositories\GameRepository;
+use api_geoquizz\core\domain\entities\geoquizz\Game;
+use  api_geoquizz\infrastructure\repositories\GameRepository;
 
 class GameService implements GameServiceInterface {
     private GameRepository $gameRepository;
