@@ -12,7 +12,7 @@ class Game extends Entity {
     #[ORM\Column(type: Types::STRING, length: 48)]
     private string $userId;
 
-    #[ORM\Column(type: Types::ARRAY, length: 48)]
+    #[ORM\Column(type: Types::STRING, length: 48)]
     private array $photoIds;
 
     #[ORM\Column(type: Types::STRING, length: 48)]
