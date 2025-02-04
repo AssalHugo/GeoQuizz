@@ -17,5 +17,10 @@ export const useUserStore = defineStore('user', {
       this.token = null
     },
   },
+  getters: {
+    isAuthenticated() {
+      return this.user !== null
+    },
+  },
   persist: true,
 })

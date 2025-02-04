@@ -47,6 +47,10 @@ export function getGamesUser(userId) {
   return request(`/users/${userId}/games`);
 }
 
-export function login(username, password) {
-  return request('/auth/login', 'POST', {username, password});
+export function login(email, password) {
+  return request('/auth/login', 'POST', {"email": email, "password": password});
+}
+
+export function register(nickname, email, password) {
+  return request('/auth/register', 'POST', {"nickname": nickname, "email": email, "password": password});
 }
