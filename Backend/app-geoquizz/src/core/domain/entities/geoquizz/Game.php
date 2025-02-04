@@ -1,7 +1,8 @@
 <?php
 
-namespace api_geoquizz\core\domain\entities;
+namespace api_geoquizz\core\domain\entities\geoquizz;
 
+use api_geoquizz\core\domain\entities\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 

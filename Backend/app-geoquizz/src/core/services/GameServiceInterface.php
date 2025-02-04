@@ -1,8 +1,8 @@
 <?php
 
-namespace api_geoquizz\core\domain\services;
+namespace api_geoquizz\core\services;
 
-use api_geoquizz\core\domain\entities\Game;
+use api_geoquizz\core\domain\entities\geoquizz\Game;
 
 interface GameServiceInterface {
 
