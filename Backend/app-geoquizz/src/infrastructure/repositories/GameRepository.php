@@ -1,8 +1,8 @@
 <?php
 
-namespace api_geoquizz\core\domain\repositories;
+namespace api_geoquizz\infrastructure\repositories;
 
-use api_geoquizz\core\domain\entities\Game;
+use api_geoquizz\core\domain\entities\geoquizz\Game;
 use Doctrine\ORM\EntityManager;
 
 class GameRepository {
