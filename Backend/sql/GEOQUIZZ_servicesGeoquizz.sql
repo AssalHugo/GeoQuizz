@@ -2,7 +2,7 @@ CREATE TABLE "Game" (
   "id" UUID PRIMARY KEY,
   "serie_id" int,
   "score" int,
-  "state" int,
+  "state" varchar,
   "user_id" UUID
 );
 
