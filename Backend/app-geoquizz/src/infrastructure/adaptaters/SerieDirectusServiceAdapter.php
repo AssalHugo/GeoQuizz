@@ -24,7 +24,8 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
         try {
             // Faire la requête à l'API Directus
             $response = $this->client->request('GET', '/series/' . $id);
-            $data = json_decode($response->getBody()->getContents(), true)['data'];
+            $data = json_decode($response->getBody()->getContents(), true);
+            $data = $data['data'];
 
             // Créer une nouvelle instance de Serie
             $serie = new Serie();
@@ -50,9 +51,7 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
             // Faire la requête à l'API Directus
             $response = $this->client->request('GET', '/photos', [
                 'query' => [
-                    'filter' => json_encode([
-                        'serieId' => $serieId
-                    ])
+                    'filter[serie_id][_eq]' => $serieId
                 ]
             ]);
             $data = json_decode($response->getBody()->getContents(), true)['data'];
@@ -68,7 +67,7 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
                     ->setPhoto($photo['photo'])
                     ->setLongitude((float)$photo['longitude'])
                     ->setLatitude((float)$photo['latitude'])
-                    ->setSerie($s->setId($photo['serieId']));
+                    ->setSerie($s->setId($photo['serie_id']));
                 $photos->add($p);
             }
 

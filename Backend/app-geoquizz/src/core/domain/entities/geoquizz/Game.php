@@ -1,4 +1,5 @@
 <?php
+
 namespace api_geoquizz\core\domain\entities\geoquizz;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -6,7 +7,9 @@ use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'game')]
-class Game {
+class Game
+{
+
     #[ORM\Id]
     #[ORM\Column(type: Types::STRING, length: 48)]
     private string $id;
@@ -31,51 +34,83 @@ class Game {
     private ?\DateTimeImmutable $startTime = null;
 
     // Existing getters
-    public function getId(): string { return $this->id; }
-    public function getUserId(): string { return $this->userId; }
-    public function getPhotoIds(): array { return $this->photoIds; }
-    public function getSerieId(): string { return $this->serieId; }
-    public function getScore(): int { return $this->score; }
-    public function getState(): string { return $this->state; }
-    public function getCurrentPhotoIndex(): int { return $this->currentPhotoIndex; }
-    public function getStartTime(): ?\DateTimeImmutable { return $this->startTime; }
+    public function getId(): string
+    {
+        return $this->id;
+    }
+    public function getUserId(): string
+    {
+        return $this->userId;
+    }
+    public function getPhotoIds(): array
+    {
+        return $this->photoIds;
+    }
+    public function getSerieId(): string
+    {
+        return $this->serieId;
+    }
+    public function getScore(): int
+    {
+        return $this->score;
+    }
+    public function getState(): string
+    {
+        return $this->state;
+    }
+    public function getCurrentPhotoIndex(): int
+    {
+        return $this->currentPhotoIndex;
+    }
+    public function getStartTime(): ?\DateTimeImmutable
+    {
+        return $this->startTime;
+    }
 
-    public function setId(string $id): self {
+    public function setId(string $id): self
+    {
         $this->id = $id;
         return $this;
     }
 
-    public function setUserId(string $userId): self {
+    public function setUserId(string $userId): self
+    {
         $this->userId = $userId;
         return $this;
     }
 
-    public function setSerieId(string $serieId): self {
+    public function setSerieId(string $serieId): self
+    {
         $this->serieId = $serieId;
         return $this;
     }
 
-    public function setPhotoIds(array $photoIds): self {
+    public function setPhotoIds(array $photoIds): self
+    {
         $this->photoIds = $photoIds;
         return $this;
     }
 
-    public function setScore(int $score): self {
+    public function setScore(int $score): self
+    {
         $this->score = $score;
         return $this;
     }
 
-    public function setState(string $state): self {
+    public function setState(string $state): self
+    {
         $this->state = $state;
         return $this;
     }
 
-    public function setCurrentPhotoIndex(int $index): self {
+    public function setCurrentPhotoIndex(int $index): self
+    {
         $this->currentPhotoIndex = $index;
         return $this;
     }
 
-    public function setStartTime(\DateTimeImmutable $time): self {
+    public function setStartTime(\DateTimeImmutable $time): self
+    {
         $this->startTime = $time;
         return $this;
     }
