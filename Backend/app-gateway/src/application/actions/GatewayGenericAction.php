@@ -9,6 +9,7 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpForbiddenException;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Exception\HttpInternalServerErrorException;
+use Slim\Psr7\Response;
 
 class GatewayGenericAction extends AbstractGatewayAction
 {

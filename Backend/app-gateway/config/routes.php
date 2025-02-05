@@ -14,5 +14,11 @@ return function (\Slim\App $app): \Slim\App {
 
     $app->get('/photos/{id}', \gateway_geo\application\actions\GatewayPhotosByIdAction::class);
 
+    $app->post('/auth/register', \gateway_geo\application\actions\GatewayRegisterAction::class);
+
+    $app->post('/auth/login', \gateway_geo\application\actions\GatewayLoginAction::class);
+
+    $app->get('/auth/refresh', \gateway_geo\application\actions\GatewayRefreshAction::class);
+
     return $app;
 };

@@ -8,4 +8,6 @@ return  [
     'geoquizz.api' => 'http://api.geoquizz/',
 
     'serieDirectus.api' => 'http://api.directus:8055',
+
+    'auth.api' => 'http://app.auth',
 ];
