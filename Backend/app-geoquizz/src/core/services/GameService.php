@@ -19,7 +19,7 @@ class GameService implements GameServiceInterface {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
     }
-    
+
     public function getGameById(string $gameId): ?Game {
         return $this->gameRepository->findById($gameId);
     }
@@ -66,7 +66,7 @@ class GameService implements GameServiceInterface {
         return $points * $multiplier;
     }
 
-    public function updateGameProgress(Game $game, float $latitude, float $longitude): void {
+    public function updateGameProgress(Game $game, float $latitude, float $longitude): int {
         $currentPhoto = $this->getCurrentPhoto($game);
         $distance = $this->calculateDistance(
             $latitude, 
@@ -86,6 +86,7 @@ class GameService implements GameServiceInterface {
         }
         
         $this->gameRepository->save($game);
+        return $score;
     }
 
     public function endGame(Game $game): void {
@@ -121,7 +122,7 @@ class GameService implements GameServiceInterface {
             ->first();
     }
 
-    public function getGameStatus(Game $game): string {
+    public function getGameState(Game $game): string {
         return $game->getState();
     }
 
