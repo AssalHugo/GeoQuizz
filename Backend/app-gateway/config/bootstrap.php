@@ -10,8 +10,8 @@ $builder->addDefinitions(__DIR__ . '/application_dependencies.php');
 $c = $builder->build();
 $app = AppFactory::createFromContainer($c);
 
-// $app->add(new Cors());
-// $app->add(GatewayAuthMiddleware::class);
+$app->add(new \gateway_geo\application\middlewares\Cors());
+
 
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();

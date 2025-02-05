@@ -1,6 +1,6 @@
 import { useUserStore } from '@/stores/userStore.js'
 
-const BASE_URL = ''
+const BASE_URL = 'http://localhost:1000'
 
 let isRefreshing = false
 let refreshSubscribers = []
