@@ -5,6 +5,8 @@ namespace api_geoquizz\core\domain\entities\geoquizz;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
+#[ORM\Entity]
+#[ORM\Table(name: 'User')]
 class User {
 
     #[ORM\Column(type: Types::STRING, length: 48)]

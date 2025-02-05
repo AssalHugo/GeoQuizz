@@ -7,6 +7,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\Common\Collections\Collection;
 use api_geoquizz\core\dto\SerieDTO;
 
+#[ORM\Entity]
+#[ORM\Table(name: 'Serie')]
 class Serie
 {
     #[ORM\Column(type: Types::INTEGER, length: 48)]
