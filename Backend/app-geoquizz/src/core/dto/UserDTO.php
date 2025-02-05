@@ -6,10 +6,10 @@ namespace api_geoquizz\core\dto;
 class UserDTO extends DTO {
 
     protected string $id;
-    protected string $nickname;
+    protected ?string $nickname = null;
     protected string $email;
 
-    public function __construct(string $id, string $nickname, string $email)
+    public function __construct(string $id, ?string $nickname, string $email)
     {
         $this->id = $id;
         $this->nickname = $nickname;

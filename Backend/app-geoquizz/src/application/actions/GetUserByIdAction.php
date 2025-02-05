@@ -48,12 +48,12 @@ class GetUserByIdAction extends AbstractAction
 
         $data = [
             'user' => [
-                'id' => $user->ID,
+                'id' => $user->id,
                 'nickname' => $user->nickname,
                 'email' => $user->email
             ],
             'links' => [
-                'self' => ['href' => '/users/' . $user->ID],
+                'self' => ['href' => '/users/' . $user->id],
             ]
         ];
 

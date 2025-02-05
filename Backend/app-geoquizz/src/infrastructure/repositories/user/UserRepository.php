@@ -34,22 +34,44 @@ class UserRepository implements UserRepositoryInterface {
 
     public function getUserById(string $id): User
     {
-        $res = $this->entityManager->getRepository(User::class)->findBy(['id' => $id]);
+        try {
+        $res = $this->entityManager->getRepository( User::class)->find($id);
+        } catch(\Exception $e) {
+            $errorMessage = sprintf(
+                "Erreur lors de la récupération de l'utilisateur (ID: %s): %s \nTrace: %s",
+                $id,
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+
+            throw new UserServiceEntityNotFoundException($errorMessage, $e->getCode(), $e);
+        }
 
         if($res == null) {
             throw new UserServiceEntityNotFoundException('User not found');
         }
 
         $user = new User();
-        $user->setId($res[0]->getId());
-        $user->setEmail($res[0]->getEmail());
-        $user->setNickName($res[0]->getNickName());
+        $user->setId($res->getId());
+        $user->setEmail($res->getEmail());
+        $user->setNickName($res->getNickName());
         return $user;
     }
 
     public function getUserByEmail(string $email): User
     {
-        $res = $this->entityManager->getRepository(User::class)->findBy(['email' => $email]);
+        try {
+            $res = $this->entityManager->getRepository(User::class)->findBy(['email' => $email]);
+        } catch (\Exception $e) {
+            $errorMessage = sprintf(
+                "Erreur lors de la récupération de l'utilisateur (email: %s): %s \nTrace: %s",
+                $email,
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+
+            throw new UserServiceEntityNotFoundException($errorMessage, $e->getCode(), $e);
+        }
 
         if($res == null) {
             throw new UserServiceEntityNotFoundException('User not found');

@@ -6,15 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity]
-#[ORM\Table(name: "user")]
+#[ORM\Table(name: '"user"')]
 class User {
 
     #[ORM\Id]
-    #[ORM\Column(name: "id", type: Types::GUID)]
+    #[ORM\Column(name: '"id"', type: Types::GUID)]
     private string $id;
-    #[ORM\Column(name: "nickname", type: Types::STRING, length: 48)]
-    private string $nickname;
-    #[ORM\Column(name: "email", type: Types::STRING, length: 48)]
+    #[ORM\Column(name: '"nickname"', type: Types::STRING, length: 255, nullable: true)]
+    private ?string $nickname = null;
+    #[ORM\Column(name: '"email"', type: Types::STRING, length: 255)]
     private string $email;
 
     //getter
@@ -22,7 +22,7 @@ class User {
     {
         return $this->id;
     }
-    public function getNickName(): string
+    public function getNickName(): ?string
     {
         return $this->nickname;
     }
@@ -32,7 +32,7 @@ class User {
     }
 
     // Setters
-    public function setNickName(string $nickname): self
+    public function setNickName(?string $nickname): self
     {
         $this->nickname = $nickname;
         return $this;
