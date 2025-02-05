@@ -7,11 +7,13 @@ use api_geoquizz\core\domain\entities\seriesDirectus\Photo;
 use api_geoquizz\core\domain\entities\seriesDirectus\Serie;
 use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
+use Ramsey\Uuid\Uuid;
 
-class GameService implements GameServiceInterface {
+class GameService implements GameServiceInterface
+{
     private GameRepositoryInterface $gameRepository;
     private SerieDirectusInterface $serieService;
-    
+
     public function __construct(
         GameRepositoryInterface $gameRepository,
         SerieDirectusInterface $serieService
@@ -20,39 +22,45 @@ class GameService implements GameServiceInterface {
         $this->serieService = $serieService;
     }
 
-    public function getGameById(string $gameId): ?Game {
+    public function getGameById(string $gameId): ?Game
+    {
         return $this->gameRepository->findById($gameId);
     }
-    
-    public function createGame(string $serieId, string $userId): Game {
+
+    public function createGame(string $serieId, string $userId): Game
+    {
         $game = new Game();
         $serie = $this->serieService->getSerieById($serieId);
         $photos = $serie->photos->toArray();
         shuffle($photos);
         $photoIds = array_slice(array_map(fn($photo) => $photo->getId(), $photos), 0, 10);
-        
-        $game->setUserId($userId)
+
+        $game->setId(Uuid::uuid4()->toString())
+            ->setUserId($userId)
             ->setSerieId($serieId)
             ->setPhotoIds($photoIds)
             ->setState('CREATED')
             ->setScore(0)
             ->setCurrentPhotoIndex(0);
-        
+
         $this->gameRepository->save($game);
         return $game;
     }
 
-    public function isFinished(Game $game): bool {
+    public function isFinished(Game $game): bool
+    {
         return $game->getCurrentPhotoIndex() >= count($game->getPhotoIds());
     }
 
-    public function startGame(Game $game): void {
+    public function startGame(Game $game): void
+    {
         $game->setState('IN_PROGRESS')
             ->setStartTime(new \DateTimeImmutable());
         $this->gameRepository->save($game);
     }
 
-    public function calculateScore(Game $game, float $distance, float $responseTime): int {
+    public function calculateScore(Game $game, float $distance, float $responseTime): int
+    {
         $points = 0;
         if ($distance < 100) $points = 5;
         elseif ($distance < 200) $points = 3;
@@ -66,35 +74,38 @@ class GameService implements GameServiceInterface {
         return $points * $multiplier;
     }
 
-    public function updateGameProgress(Game $game, float $latitude, float $longitude): int {
+    public function updateGameProgress(Game $game, float $latitude, float $longitude): int
+    {
         $currentPhoto = $this->getCurrentPhoto($game);
         $distance = $this->calculateDistance(
-            $latitude, 
-            $longitude, 
-            $currentPhoto->getLatitude(), 
+            $latitude,
+            $longitude,
+            $currentPhoto->getLatitude(),
             $currentPhoto->getLongitude()
         );
-        
+
         $responseTime = time() - $game->getStartTime()->getTimestamp();
         $score = $this->calculateScore($game, $distance, $responseTime);
-        
+
         $game->setScore($game->getScore() + $score)
             ->setCurrentPhotoIndex($game->getCurrentPhotoIndex() + 1);
-        
+
         if ($this->isFinished($game)) {
             $this->endGame($game);
         }
-        
+
         $this->gameRepository->save($game);
         return $score;
     }
 
-    public function endGame(Game $game): void {
+    public function endGame(Game $game): void
+    {
         $game->setState('FINISHED');
         $this->gameRepository->save($game);
     }
 
-    public function saveGameResult(Game $game): bool {
+    public function saveGameResult(Game $game): bool
+    {
         try {
             $this->gameRepository->save($game);
             return true;
@@ -103,7 +114,8 @@ class GameService implements GameServiceInterface {
         }
     }
 
-    public function getGamePhotos(Game $game): array {
+    public function getGamePhotos(Game $game): array
+    {
         $photos = [];
         foreach ($game->getPhotoIds() as $photoId) {
             $photos[] = $this->serieService->getPhotoBySerie($game->getSerieId())
@@ -113,23 +125,25 @@ class GameService implements GameServiceInterface {
         return $photos;
     }
 
-    public function getCurrentPhoto(Game $game): ?Photo {
+    public function getCurrentPhoto(Game $game): ?Photo
+    {
         $photoId = $game->getPhotoIds()[$game->getCurrentPhotoIndex()] ?? null;
         if (!$photoId) return null;
-        
+
         return $this->serieService->getPhotoBySerie($game->getSerieId())
             ->filter(fn($photo) => $photo->getId() === $photoId)
             ->first();
     }
 
-    public function getGameState(Game $game): string {
+    public function getGameState(Game $game): string
+    {
         return $game->getState();
     }
 
     private function calculateDistance(
-        float $lat1, 
-        float $lon1, 
-        float $lat2, 
+        float $lat1,
+        float $lon1,
+        float $lat2,
         float $lon2
     ): float {
         $earthRadius = 6371000;
@@ -137,15 +151,15 @@ class GameService implements GameServiceInterface {
         $lon1 = deg2rad($lon1);
         $lat2 = deg2rad($lat2);
         $lon2 = deg2rad($lon2);
-        
+
         $dlat = $lat2 - $lat1;
         $dlon = $lon2 - $lon1;
-        
-        $a = sin($dlat/2) * sin($dlat/2) +
-             cos($lat1) * cos($lat2) *
-             sin($dlon/2) * sin($dlon/2);
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
-        
+
+        $a = sin($dlat / 2) * sin($dlat / 2) +
+            cos($lat1) * cos($lat2) *
+            sin($dlon / 2) * sin($dlon / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
         return $earthRadius * $c;
     }
 }
