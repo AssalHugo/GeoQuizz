@@ -5,16 +5,16 @@ namespace api_geoquizz\core\services;
 use api_geoquizz\core\domain\entities\geoquizz\Game;
 use api_geoquizz\core\domain\entities\seriesDirectus\Photo;
 use api_geoquizz\core\domain\entities\seriesDirectus\Serie;
-use api_geoquizz\infrastructure\repositories\GameRepository;
-use api_geoquizz\infrastructure\adaptaters\SerieDirectusServiceAdapter;
+use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
+use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
 
 class GameService implements GameServiceInterface {
-    private GameRepository $gameRepository;
-    private SerieDirectusServiceAdapter $serieService;
+    private GameRepositoryInterface $gameRepository;
+    private SerieDirectusInterface $serieService;
     
     public function __construct(
-        GameRepository $gameRepository,
-        SerieDirectusServiceAdapter $serieService
+        GameRepositoryInterface $gameRepository,
+        SerieDirectusInterface $serieService
     ) {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;

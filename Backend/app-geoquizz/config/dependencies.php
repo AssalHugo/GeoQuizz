@@ -15,6 +15,7 @@ use api_geoquizz\infrastructure\adaptaters\SerieDirectusServiceAdapter;
 use api_geoquizz\core\services\GameService;
 use api_geoquizz\core\services\GameServiceInterface;
 use api_geoquizz\infrastructure\repositories\GameRepository;
+use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 
 $settings = require __DIR__ . '/settings.php';
 
@@ -57,14 +58,18 @@ return [
             $container->get('guzzle.client.gateway')
         );
     },
-
+    GameRepositoryInterface::class => function (ContainerInterface $container) {
+        return new GameRepository($container->get(EntityManager::class));
+    },
+    GameServiceInterface::class => function (ContainerInterface $container) {
+        return new GameService($container->get(GameRepositoryInterface::class), $container->get(SerieDirectusInterface::class) );
+    },
     CreateGameAction::class => function (ContainerInterface $container) {
         return new CreateGameAction($container->get(GameServiceInterface::class));
     },
-
     GameService::class => function (ContainerInterface $container) {
         return new GameService(
-            $container->get(GameRepository::class),
+            $container->get(GameRepositoryInterface::class),
             $container->get(SerieDirectusInterface::class)
         );
     }
