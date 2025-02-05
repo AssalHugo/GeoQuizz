@@ -14,13 +14,15 @@ $config = ORMSetup::createAttributeMetadataConfiguration(
     $isDevMode
 );
 
+$dbconfig = parse_ini_file(__DIR__ . '/geoquizz.db.ini');
+
 $connection = DriverManager::getConnection([
     'driver' => 'pdo_pgsql',
-    'host' => getenv('DB_HOST'),
-    'dbname' => getenv('DB_NAME'),
-    'user' => getenv('DB_USER'),
-    'password' => getenv('DB_PASSWORD'),
-    'port' => getenv('DB_PORT'),
+    'host' => $dbconfig['host'],
+    'dbname' => $dbconfig['database'],
+    'user' => $dbconfig['username'],
+    'password' => $dbconfig['password'],
+    'port' => $dbconfig['port'],
 ], $config);
 
 $entityManager = new EntityManager($connection, $config);

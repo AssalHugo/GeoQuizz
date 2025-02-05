@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 use api_geoquizz\core\dto\PhotoDTO;
 
+#[ORM\Entity]
+#[ORM\Table(name: 'Photo')]
 class Photo
 {
     #[ORM\Column(type: Types::INTEGER, length: 48)]
