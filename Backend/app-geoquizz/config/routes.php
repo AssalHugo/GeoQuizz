@@ -36,6 +36,9 @@ return function (\Slim\App $app): \Slim\App {
         // Obtenir le statut d'une partie
         $app->get('/{id}/status', [GameAction::class, 'getStatus']);
     });
+    $app->post('/users', \api_geoquizz\application\actions\CreateUserAction::class);
+    $app->get('/users/{id}', \api_geoquizz\application\actions\GetUserByIdAction::class);
+    $app->get('/users', \api_geoquizz\application\actions\GetUserByEmailAction::class);
 
     return $app;
 };
