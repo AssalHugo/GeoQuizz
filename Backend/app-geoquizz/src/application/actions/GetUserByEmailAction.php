@@ -19,7 +19,20 @@ class GetUserByEmailAction extends AbstractAction
 
     public function __invoke(Request $rq, Response $rs, array $args): Response
     {
-        $email = $args['email'];
+        $email = $rq->getQueryParams()['email'] ?? null;
+
+        if (is_null($email)) {
+            $data = [
+                'message' => 'Missing email parameter',
+                'exception' => [
+                    'type' => 'InvalidArgumentException',
+                    'code' => 400,
+                    'file' => __FILE__,
+                    'line' => __LINE__
+                ]
+            ];
+            return JsonRenderer::render($rs, 400, $data);
+        }
         try {
             $userDTO = $this->userService->getUserByEmail($email);
         } catch (UserServiceEntityNotFoundException $e) {
@@ -59,5 +72,4 @@ class GetUserByEmailAction extends AbstractAction
 
         return JsonRenderer::render($rs, 200, $data);
     }
-
 }
