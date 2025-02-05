@@ -23,7 +23,7 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
     {
         try {
             // Faire la requête à l'API Directus
-            $response = $this->client->request('GET', '/items/series/' . $id);
+            $response = $this->client->request('GET', '/series/' . $id);
             $data = json_decode($response->getBody()->getContents(), true)['data'];
 
             // Créer une nouvelle instance de Serie
@@ -48,7 +48,7 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
     {
         try {
             // Faire la requête à l'API Directus
-            $response = $this->client->request('GET', '/items/photos', [
+            $response = $this->client->request('GET', '/photos', [
                 'query' => [
                     'filter' => json_encode([
                         'serieId' => $serieId
@@ -82,7 +82,7 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
     {
         try {
             // Faire la requête à l'API Directus
-            $response = $this->client->request('GET', '/items/series');
+            $response = $this->client->request('GET', '/series');
             $data = json_decode($response->getBody()->getContents(), true)['data'];
 
             // Créer une nouvelle collection de Serie

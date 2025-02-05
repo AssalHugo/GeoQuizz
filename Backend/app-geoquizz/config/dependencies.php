@@ -18,9 +18,9 @@ return [
 
     'settings' => $settings,
 
-    'guzzle.client.serieDirectus' => function (ContainerInterface $container) {
+    'guzzle.client.gateway' => function (ContainerInterface $container) {
         return new \GuzzleHttp\Client([
-            'base_uri' => $container->get('settings')['serieDirectus.api']
+            'base_uri' => $container->get('settings')['gateway.api']
         ]);
     },
 
@@ -39,7 +39,7 @@ return [
     GetUserByIdAction::class => function (ContainerInterface $container) {
         return new GetUserByIdAction($container->get(UserServiceInterface::class));
     },
-    
+
     GetUserByEmailAction::class => function (ContainerInterface $container) {
         return new GetUserByEmailAction($container->get(UserServiceInterface::class));
     },
@@ -50,7 +50,7 @@ return [
 
     SerieDirectusInterface::class => function (ContainerInterface $container) {
         return new SerieDirectusServiceAdapter(
-            $container->get('guzzle.client.serieDirectus')
+            $container->get('guzzle.client.gateway')
         );
     }
 
