@@ -50,6 +50,11 @@ class UserRepository implements UserRepositoryInterface {
     public function getUserByEmail(string $email): User
     {
         $res = $this->entityManager->getRepository(User::class)->findBy(['email' => $email]);
+
+        if($res == null) {
+            throw new UserServiceEntityNotFoundException('User not found');
+        }
+
         $user = new User();
         $user->setId($res[0]->getId());
         $user->setEmail($res[0]->getEmail());

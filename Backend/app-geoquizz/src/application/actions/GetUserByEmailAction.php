@@ -8,7 +8,7 @@ use api_geoquizz\core\services\user\UserServiceInterface;
 use api_geoquizz\core\services\user\UserServiceEntityNotFoundException;
 use api_geoquizz\application\renderer\JsonRenderer;
 
-class GetUserByIdAction extends AbstractAction
+class GetUserByEmailAction extends AbstractAction
 {
     protected UserServiceInterface $userService;
 
@@ -19,9 +19,9 @@ class GetUserByIdAction extends AbstractAction
 
     public function __invoke(Request $rq, Response $rs, array $args): Response
     {
-        $id = $args['id'];
+        $email = $args['email'];
         try {
-            $user = $this->userService->getUserById($id);
+            $userDTO = $this->userService->getUserByEmail($email);
         } catch (UserServiceEntityNotFoundException $e) {
             $data = [
                 'message' => $e->getMessage(),
@@ -40,7 +40,7 @@ class GetUserByIdAction extends AbstractAction
                     'type' => get_class($e),
                     'code' => $e->getCode(),
                     'file' => $e->getFile(),
-                    'line' => $e->getLine(),
+                    'line' => $e->getLine()
                 ]
             ];
             return JsonRenderer::render($rs, 400, $data);
@@ -48,15 +48,16 @@ class GetUserByIdAction extends AbstractAction
 
         $data = [
             'user' => [
-                'id' => $user->ID,
-                'nickname' => $user->nickname,
-                'email' => $user->email
+                'id' => $userDTO->id,
+                'nickname' => $userDTO->nickname,
+                'email' => $userDTO->email
             ],
             'links' => [
-                'self' => ['href' => '/users/' . $user->ID],
+                'self' => ['href' => '/users?email=' . $email],
             ]
         ];
 
         return JsonRenderer::render($rs, 200, $data);
     }
+
 }

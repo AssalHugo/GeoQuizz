@@ -5,13 +5,16 @@ namespace api_geoquizz\core\domain\entities\geoquizz;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
 
+#[ORM\Entity]
+#[ORM\Table(name: "user")]
 class User {
 
-    #[ORM\Column(type: Types::STRING, length: 48)]
+    #[ORM\Id]
+    #[ORM\Column(name: "id", type: Types::GUID)]
     private string $id;
-    #[ORM\Column(type: Types::STRING, length: 48)]
+    #[ORM\Column(name: "nickname", type: Types::STRING, length: 48)]
     private string $nickname;
-    #[ORM\Column(type: Types::STRING, length: 48)]
+    #[ORM\Column(name: "email", type: Types::STRING, length: 48)]
     private string $email;
 
     //getter
