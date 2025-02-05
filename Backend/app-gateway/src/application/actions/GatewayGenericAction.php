@@ -15,11 +15,6 @@ class GatewayGenericAction extends AbstractGatewayAction
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface
     {
         $uri = $rq->getUri()->getPath();
-        // $uri = '/items' . $uri;
-
-        if (str_contains($uri, 'series') || str_contains($uri, 'photos')) {
-            $uri = '/items' . $uri;
-        }
 
         $method = $rq->getMethod();
         $options = [
@@ -27,6 +22,19 @@ class GatewayGenericAction extends AbstractGatewayAction
             'query' => $rq->getQueryParams(),
             'body' => $rq->getBody()->getContents()
         ];
+
+        if (str_contains($uri, 'series') || str_contains($uri, 'photos')) {
+            $uri = '/items' . $uri;
+            $tokenDirectus = parse_ini_file(__DIR__ . '/../../../config/tokenDirectus.ini')['TOKEN_DIRECTUS'];
+
+            $options = [
+                'headers' => $rq->getHeaders(),
+                'query' => $rq->getQueryParams(),
+                'body' => $rq->getBody()->getContents()
+            ];
+
+            $options['headers']['Authorization'] = 'Bearer ' . $tokenDirectus;
+        }
 
         try {
             $response = $this->remote->request($method, $uri, $options);
