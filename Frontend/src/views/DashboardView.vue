@@ -23,19 +23,19 @@ export default {
 
 <template>
   <div class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div v-if="userStore.token" class="container mx-auto px-4">
-      <h1 class="text-3xl font-extrabold mb-6 text-center text-gray-800">Séries disponibles</h1>
-      <div class="mb-4">
-        <ul class="space-y-4">
-          <li
-            v-for="serie in series"
-            :key="serie.id"
-            class="bg-gray-100 p-4 rounded-lg shadow-sm hover:shadow-md transition"
-          >
-            <SerieItem :serie="serie" />
-          </li>
-        </ul>
-      </div>
+    <h1 class="text-3xl font-extrabold mb-6 text-center text-gray-800">
+      Séries disponibles ({{ series.length }})
+    </h1>
+    <div class="mb-4">
+      <ul class="space-y-4">
+        <li
+          v-for="serie in series"
+          :key="serie.id"
+          class="bg-gray-100 p-4 rounded-lg shadow-sm hover:shadow-md transition"
+        >
+          <SerieItem :serie="serie" />
+        </li>
+      </ul>
     </div>
   </div>
 </template>

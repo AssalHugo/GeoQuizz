@@ -1,6 +1,8 @@
+geoquizzdb.env
 *.env
 .DS_Store
 geodirectus.env
 geoquizz.env
 geoquizzdb.env
+../geoquizzdb.env
 geoquizzdb.env

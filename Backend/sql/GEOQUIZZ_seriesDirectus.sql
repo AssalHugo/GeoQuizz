@@ -15,4 +15,4 @@ CREATE TABLE "photos" (
   "serie_id" int
 );
 
-ALTER TABLE "photo" ADD FOREIGN KEY ("serie_id") REFERENCES "serie" ("id");
+ALTER TABLE "photos" ADD FOREIGN KEY ("serie_id") REFERENCES "series" ("id");
