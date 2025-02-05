@@ -64,6 +64,10 @@ export function getGamesUser(userId) {
   return request(`/users/${userId}/games`)
 }
 
+export function getSeries() {
+  return request('/series')
+}
+
 export function login(email, password) {
   return request('/auth/login', 'POST', { email: email, password: password })
 }
@@ -76,8 +80,8 @@ export function register(nickname, email, password) {
   })
 }
 
-export function createGame() {
-  return request('/games', 'POST')
+export function createGame(user_id, serie_id) {
+  return request('/games', 'POST', { user_id: user_id, serie_id: serie_id })
 }
 
 export function joinGame(gameId) {

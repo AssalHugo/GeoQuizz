@@ -2,24 +2,26 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    user: null,
     token: null,
   }),
   actions: {
-    setUser(userData) {
-      this.user = userData
-    },
     setToken(token) {
       this.token = token
     },
     logout() {
-      this.user = null
       this.token = null
     },
   },
   getters: {
     isAuthenticated() {
-      return this.user !== null
+      return this.token !== null
+    },
+    //Retourne l'id de l'user
+    user() {
+      if (!this.token) return null
+      const payload = JSON.parse(atob(this.token.split('.')[1]))
+      //On retourne la partie sub de l'user
+      if (payload.user) return payload.user.sub
     },
   },
   persist: true,
