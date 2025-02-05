@@ -44,7 +44,7 @@ class User {
         return $this;
     }
 
-    public function setID(string $id):self
+    public function setId(string $id):self
     {
         $this->id = $id;
         return $this;
