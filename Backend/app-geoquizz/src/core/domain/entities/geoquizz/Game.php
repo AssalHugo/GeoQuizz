@@ -29,8 +29,10 @@ class Game
     #[ORM\Column(type: Types::STRING, length: 20)]
     private string $state;
 
+    #[ORM\Column(type: Types::INTEGER)]
     private int $currentPhotoIndex = 0;
 
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $startTime = null;
 
     // Existing getters

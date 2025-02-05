@@ -41,7 +41,7 @@ class GameService implements GameServiceInterface
             ->setPhotoIds($photoIds)
             ->setState('CREATED')
             ->setScore(0)
-            ->setCurrentPhotoIndex(0);
+            ->setCurrentPhotoIndex(1);
 
         $this->gameRepository->save($game);
         return $game;
@@ -83,20 +83,30 @@ class GameService implements GameServiceInterface
             $currentPhoto->getLatitude(),
             $currentPhoto->getLongitude()
         );
-
-        $responseTime = time() - $game->getStartTime()->getTimestamp();
+    
+        // Vérification si getStartTime() est null
+        $startTime = $game->getStartTime();
+        if ($startTime === null) {
+            // Si startTime est null, utiliser l'heure actuelle comme valeur par défaut
+            $startTime = new \DateTimeImmutable();
+            // Optionnel : vous pouvez également vouloir mettre à jour la startTime ici si elle est nulle
+            $game->setStartTime($startTime);
+        }
+    
+        $responseTime = time() - $startTime->getTimestamp();
         $score = $this->calculateScore($game, $distance, $responseTime);
-
+    
         $game->setScore($game->getScore() + $score)
             ->setCurrentPhotoIndex($game->getCurrentPhotoIndex() + 1);
-
+    
         if ($this->isFinished($game)) {
             $this->endGame($game);
         }
-
+    
         $this->gameRepository->save($game);
         return $score;
     }
+    
 
     public function endGame(Game $game): void
     {
@@ -127,14 +137,33 @@ class GameService implements GameServiceInterface
 
     public function getCurrentPhoto(Game $game): ?Photo
     {
-        $photoId = $game->getPhotoIds()[$game->getCurrentPhotoIndex()] ?? null;
-        if (!$photoId) return null;
-
-        return $this->serieService->getPhotoBySerie($game->getSerieId())
+        $photoIds = $game->getPhotoIds();
+        $currentPhotoIndex = $game->getCurrentPhotoIndex();
+    
+        error_log("PhotoIds: " . json_encode($photoIds));
+        error_log("Current Photo Index: " . $currentPhotoIndex);
+    
+        if (empty($photoIds) || !isset($photoIds[$currentPhotoIndex])) {
+            error_log("No valid photo ID found for the current index.");
+            return null;
+        }
+    
+        $photoId = $photoIds[$currentPhotoIndex];
+        error_log("Fetching photo with ID: " . $photoId);
+    
+        $photo = $this->serieService->getPhotoBySerie($game->getSerieId())
             ->filter(fn($photo) => $photo->getId() === $photoId)
             ->first();
+    
+        if (!$photo) {
+            error_log("No photo found with ID: " . $photoId);
+            return null;
+        }
+    
+        error_log("Photo found: " . var_export($photo, true));
+        return $photo;
     }
-
+    
     public function getGameState(Game $game): string
     {
         return $game->getState();

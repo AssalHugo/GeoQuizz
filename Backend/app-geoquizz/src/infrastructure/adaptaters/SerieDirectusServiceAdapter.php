@@ -67,6 +67,7 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
                     ->setPhoto($photo['photo'])
                     ->setLongitude((float)$photo['longitude'])
                     ->setLatitude((float)$photo['latitude'])
+                    ->setAdresse($photo['adresse'])
                     ->setSerie($s->setId($photo['serie_id']));
                 $photos->add($p);
             }

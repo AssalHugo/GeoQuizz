@@ -4,32 +4,43 @@ namespace api_geoquizz\application\actions;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use api_geoquizz\core\services\GameService;
+use api_geoquizz\core\services\GameServiceInterface;
+use api_geoquizz\application\renderer\JsonRenderer;
 use Slim\Psr7\Response;
 use Slim\App;
 
 class GetGameAction extends AbstractAction {
-    private GameService $gameService;
+    private GameServiceInterface $gameService;
     
-    public function __construct(GameService $gameService) {
+    public function __construct(GameServiceInterface $gameService) {
         $this->gameService = $gameService;
     }
     
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
-        $game = $this->gameService->getGameById($args['gameId']);
-        if (!$game) {
-            return $rs->withStatus(404)->withHeader('Content-Type', 'application/json')
-                      ->getBody()->write(json_encode(['error' => 'Game not found']));
+        try {
+            if (!isset($args['id'])) {
+                throw new \InvalidArgumentException("Missing game ID in URL.");
+            }
+    
+            $gameId = $args['id']; // Récupère l'ID de l'URL
+            $game = $this->gameService->getGameById($gameId);
+    
+            if (!$game) {
+                return JsonRenderer::render($rs, 404, ['message' => 'Game not found']);
+            }
+    
+            return JsonRenderer::render($rs, 200, [
+                'gameId' => $game->getId(),
+                'score' => $game->getScore(),
+                'state' => $game->getState(),
+            ]);
+        } catch (\Exception $e) {
+            return JsonRenderer::render($rs, 400, [
+                'message' => $e->getMessage(),
+                'error' => get_class($e)
+            ]);
         }
-        
-        $rs->getBody()->write(json_encode([
-            'gameId' => $game->getId(),
-            'userId' => $game->getUserId(),
-            'serieId' => $game->getSerieId(),
-            'score' => $game->getScore(),
-            'state' => $game->getState()
-        ]));
-        return $rs->withHeader('Content-Type', 'application/json');
     }
+    
 
 }

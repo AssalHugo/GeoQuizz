@@ -2,8 +2,11 @@
 
 use api_geoquizz\application\actions\CreateGameAction;
 use api_geoquizz\application\actions\CreateUserAction;
+use api_geoquizz\application\actions\GetGameAction;
 use api_geoquizz\application\actions\GetUserByEmailAction;
 use api_geoquizz\application\actions\GetUserByIdAction;
+use api_geoquizz\application\actions\PlayGameAction;
+use api_geoquizz\application\actions\StartGameAction;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
@@ -64,13 +67,24 @@ return [
     GameServiceInterface::class => function (ContainerInterface $container) {
         return new GameService($container->get(GameRepositoryInterface::class), $container->get(SerieDirectusInterface::class) );
     },
-    CreateGameAction::class => function (ContainerInterface $container) {
-        return new CreateGameAction($container->get(GameServiceInterface::class));
-    },
     GameService::class => function (ContainerInterface $container) {
         return new GameService(
             $container->get(GameRepositoryInterface::class),
             $container->get(SerieDirectusInterface::class)
         );
+    },
+    CreateGameAction::class => function (ContainerInterface $container) {
+        return new CreateGameAction($container->get(GameServiceInterface::class));
+    },
+    GetGameAction::class => function (ContainerInterface $container){
+        return new GetGameAction($container->get(GameServiceInterface::class));
+    },
+    PlayGameAction::class => function (ContainerInterface $container){
+        return new PlayGameAction($container->get(GameServiceInterface::class));
+    },
+    StartGameAction::class => function (ContainerInterface $container){
+        return new StartGameAction($container->get(GameServiceInterface::class));
+
     }
+    
 ];
