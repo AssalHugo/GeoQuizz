@@ -15,6 +15,12 @@ class GatewayGenericAction extends AbstractGatewayAction
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface
     {
         $uri = $rq->getUri()->getPath();
+        // $uri = '/items' . $uri;
+
+        if (str_contains($uri, 'series') || str_contains($uri, 'photos')) {
+            $uri = '/items' . $uri;
+        }
+
         $method = $rq->getMethod();
         $options = [
             'headers' => $rq->getHeaders(),
