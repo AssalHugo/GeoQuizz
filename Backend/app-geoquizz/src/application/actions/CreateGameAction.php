@@ -17,7 +17,7 @@ class CreateGameAction extends AbstractAction {
     
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
         $body = $rq->getParsedBody();
-        $game = $this->gameService->createGame($body['serieId'], $body['userId']);
+        $game = $this->gameService->createGame($body['serieId'], $body['username']);
         $rs->getBody()->write(json_encode(['gameId' => $game->getId()]));
         return $rs->withHeader('Content-Type', 'application/json');
     }
