@@ -8,7 +8,7 @@ use api_geoquizz\core\services\GameService;
 use Slim\Psr7\Response;
 use Slim\App;
 
-class EndGameAction extends AbstractAction {
+class GetGameStateAction extends AbstractAction {
     private GameService $gameService;
     
     public function __construct(GameService $gameService) {
@@ -17,8 +17,8 @@ class EndGameAction extends AbstractAction {
     
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
         $game = $this->gameService->getGameById($args['gameId']);
-        $this->gameService->endGame($game);
-        $rs->getBody()->write(json_encode(['status' => 'Game ended', 'finalScore' => $game->getScore()]));
+        
+        $rs->getBody()->write(json_encode(['status' => $game->getState()]));
         return $rs->withHeader('Content-Type', 'application/json');
     }
 }

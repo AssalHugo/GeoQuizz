@@ -8,17 +8,19 @@ use api_geoquizz\core\services\GameService;
 use Slim\Psr7\Response;
 use Slim\App;
 
-class EndGameAction extends AbstractAction {
+class GetCurrentPhotoAction extends AbstractAction 
+{
     private GameService $gameService;
     
     public function __construct(GameService $gameService) {
         $this->gameService = $gameService;
     }
-    
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
         $game = $this->gameService->getGameById($args['gameId']);
-        $this->gameService->endGame($game);
-        $rs->getBody()->write(json_encode(['status' => 'Game ended', 'finalScore' => $game->getScore()]));
+        $photo = $this->gameService->getCurrentPhoto($game);
+        
+        $rs->getBody()->write(json_encode(['photo' => $photo]));
         return $rs->withHeader('Content-Type', 'application/json');
     }
+
 }

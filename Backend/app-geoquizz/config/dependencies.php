@@ -53,5 +53,4 @@ return [
             $container->get('guzzle.client.gateway')
         );
     }
-
 ];
