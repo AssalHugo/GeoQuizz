@@ -2,7 +2,7 @@
 
 namespace api_geoquizz\infrastructure\adaptaters;
 
-use api_geoquizz\core\services\serieDirectus\SerieDirectusInterface;
+use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
 use GuzzleHttp\Client;
 use api_geoquizz\core\dto\SerieDTO;
 use api_geoquizz\core\domain\entities\seriesDirectus\Serie;

@@ -1,6 +1,6 @@
 <?php
 
-namespace api_geoquizz\core\services\serieDirectus;
+namespace api_geoquizz\core\services\seriesDirectus;
 
 use api_geoquizz\core\dto\SerieDTO;
 use Doctrine\Common\Collections\Collection;
