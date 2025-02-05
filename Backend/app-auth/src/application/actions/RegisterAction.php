@@ -63,6 +63,6 @@ class RegisterAction extends AbstractAction
             ]
         ];
 
-        return JsonRenderer::render($rs, 200, $data);
+        return JsonRenderer::render($rs, 201, $data);
     }
 }

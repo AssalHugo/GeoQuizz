@@ -22,7 +22,7 @@ class PDOAuthRepository implements AuthRepositoryInterface
 
     public function save(User $user): string
     {
-        $query = 'INSERT INTO users (id, password) VALUES (:id, :pwd)';
+        $query = 'INSERT INTO auth (id, password) VALUES (:id, :pwd)';
         try {
             $stmt = $this->pdoAuth->prepare($query);
             $stmt->bindValue(':id', $user->getID(), \PDO::PARAM_STR);
@@ -37,7 +37,7 @@ class PDOAuthRepository implements AuthRepositoryInterface
     public function getUserByEmail(string $email): User
     {
         $user = $this->sgi->getUserByEmail($email);
-        $query = 'SELECT * FROM users WHERE id = :id';
+        $query = 'SELECT * FROM auth WHERE id = :id';
         try {
             $stmt = $this->pdoAuth->prepare($query);
             $stmt->bindValue(':id', $user->id, \PDO::PARAM_STR);
@@ -47,7 +47,14 @@ class PDOAuthRepository implements AuthRepositoryInterface
                 throw new RepositoryEntityNotFoundException('User not found');
             }
         } catch (\PDOException $e) {
-            throw new RepositoryDatabaseErrorException('Error while fetching user');
+            $errorMessage = sprintf(
+                "Erreur lors de la récupération de l'utilisateur (email: %s): %s \nTrace: %s",
+                $email,
+                $e->getMessage(),
+                $e->getTraceAsString()
+            );
+
+            throw new RepositoryEntityNotFoundException($errorMessage, (int) $e->getCode(), $e);
         }
         $u = new User($user->email,$userAuth['password']);
         $u->setID($userAuth['id']);
@@ -57,7 +64,7 @@ class PDOAuthRepository implements AuthRepositoryInterface
     public function getUserById(string $id): User
     {
         $user = $this->sgi->getUserById($id);
-        $query = 'SELECT * FROM users WHERE id = :id';
+        $query = 'SELECT * FROM auth WHERE id = :id';
         try {
             $stmt = $this->pdoAuth->prepare($query);
             $stmt->bindValue(':id', $id, \PDO::PARAM_STR);

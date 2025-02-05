@@ -15,7 +15,7 @@ class UserService implements UserServiceInterface {
     }
 
     public function createUser(UserDTO $user): void {
-        $this->userRepository->createUser($user->ID, $user->email, $user->nickname);
+        $this->userRepository->createUser($user->id, $user->email, $user->nickname);
     }
 
     public function getUserById(string $id): UserDTO {

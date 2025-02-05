@@ -15,28 +15,34 @@ class ServiceGeoquizzAdapter implements ServiceGeoquizzInterface
         $this->client = $client;
     }
 
-    public function createUser(UserDTO $user): UserDTO
+    public function createUser(UserDTO $user): void
     {
         $response = $this->client->post("/users", [
-            'id' => $user->id,
-            'email' => $user->email,
-            'nickname' => $user->nickname
+            'json' => [
+                'id' => $user->id,
+                'email' => $user->email,
+                'nickname' => $user->nickname
+            ]
         ]);
-        $data = json_decode($response->getBody()->getContents(), true);
-        return new UserDTO($data['id'], $data['nickname'], $data['email']);
+        
+        if($response->getStatusCode() !== 201){
+            throw new \Exception("Error while creating user", $response->getStatusCode());
+        }
     }
 
     public function getUserById(string $id): UserDTO
     {
         $response = $this->client->get("/users/$id");
         $data = json_decode($response->getBody()->getContents(), true);
-        return new UserDTO($data['id'], $data['nickname'], $data['email']);;
+        return new UserDTO($data['user']['id'], $data['user']['nickname'], $data['user']['email']);
     }
 
     public function getUserByEmail(string $email): UserDTO
     {
-        $response = $this->client->get("/users?email=$email");
+        $response = $this->client->get("/users", [
+            'query' => ['email' => $email]
+        ]);
         $data = json_decode($response->getBody()->getContents(), true);
-        return new UserDTO($data['id'], $data['nickname'], $data['email']);
+        return new UserDTO($data['user']['id'], $data['user']['nickname'], $data['user']['email']);
     }
 }
