@@ -83,3 +83,7 @@ export function createGame() {
 export function joinGame(gameId) {
   return request(`/games/${gameId}/start`, 'PUT')
 }
+
+export function getGameById(gameId) {
+  return request(`/games/${gameId}`)
+}

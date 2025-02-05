@@ -2,7 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '@/views/DashboardView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import LoginView from '@/views/LoginView.vue'
-import { useUserStore } from '@/stores/userStore.js'
+import GameView from '@/views/GameView.vue'
+// import { name } from '@vue/eslint-config-prettier/skip-formatting'
+// import { useUserStore } from '@/stores/userStore.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,7 +26,13 @@ const router = createRouter({
       name: 'login',
       component: LoginView,
       meta: { requiresGuest: true },
-    }
+    },
+    {
+      path: '/game/:id',
+      name: 'game',
+      component: GameView,
+      meta: { requiresAuth: true },
+    },
   ],
 })
 
