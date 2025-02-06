@@ -5,7 +5,9 @@ declare(strict_types=1);
 
 return function (\Slim\App $app): \Slim\App {
 
-
+    $app->options('/{routes:.+}', function ($request, $response, $args) {
+        return $response;
+    });
 
     $app->get('/', \gateway_geo\application\actions\HomeAction::class);
 
@@ -22,10 +24,6 @@ return function (\Slim\App $app): \Slim\App {
     $app->post('/auth/signin', \gateway_geo\application\actions\GatewayLoginAction::class);
 
     $app->get('/auth/refresh', \gateway_geo\application\actions\GatewayRefreshAction::class);
-
-    $app->options('/{routes:.+}', function ($request, $response) {
-        return $response;
-    })->add(\gateway_geo\application\middlewares\Cors::class);
 
     return $app;
 };
