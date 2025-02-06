@@ -99,3 +99,7 @@ export function getCurrentPhoto(gameId) {
 export function getSerieById(serieId) {
   return request(`/series/${serieId}`)
 }
+
+export function validateAnswer(gameId, lat, long) {
+  return request(`/games/${gameId}/answer`, 'POST', { lat: lat, long: long })
+}
