@@ -24,9 +24,10 @@ class GatewayGenericAction extends AbstractGatewayAction
             'body' => $rq->getBody()->getContents()
         ];
 
-        if (str_contains($uri, 'series') || str_contains($uri, 'photos')) {
+        if ((str_contains($uri, 'series') || str_contains($uri, 'photos')) && !str_contains($uri, 'users')) {
             $uri = '/items' . $uri;
-            $tokenDirectus = parse_ini_file(__DIR__ . '/../../../config/tokenDirectus.ini')['TOKEN_DIRECTUS'];
+
+            $tokenDirectus = parse_ini_file('/var/php/../../tokenDirectus.ini')['TOKEN_DIRECTUS'];
 
             $options = [
                 'headers' => $rq->getHeaders(),

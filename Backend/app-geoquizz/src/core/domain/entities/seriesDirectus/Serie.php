@@ -1,16 +1,18 @@
 <?php
 
-namespace api_geoquizz\core\domain\entities\SeriesDirectus;
+namespace api_geoquizz\core\domain\entities\seriesDirectus;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
-use api_geoquizz\core\domain\entities\Entity;
 use Doctrine\Common\Collections\Collection;
+use api_geoquizz\core\dto\SerieDTO;
 
-class Serie extends Entity
+#[ORM\Entity]
+#[ORM\Table(name: 'Serie')]
+class Serie
 {
-    #[ORM\Column(type: Types::STRING, length: 48)]
-    private string $id;
+    #[ORM\Column(type: Types::INTEGER, length: 48)]
+    private int $id;
 
     #[ORM\Column(type: Types::STRING, length: 48)]
     private string $titre;
@@ -28,7 +30,7 @@ class Serie extends Entity
     private Collection $photos;
 
     // Getters
-    public function getId(): string
+    public function getId(): int
     {
         return $this->id;
     }
@@ -53,9 +55,46 @@ class Serie extends Entity
         return $this->largeur;
     }
 
-    public function getPhotos(): array
+    public function getPhotos(): Collection
     {
         return $this->photos;
+    }
+
+    // Setters
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    public function setTitre(string $titre): self
+    {
+        $this->titre = $titre;
+        return $this;
+    }
+
+    public function setLatitude(float $latitude): self
+    {
+        $this->latitude = $latitude;
+        return $this;
+    }
+
+    public function setLongitude(float $longitude): self
+    {
+        $this->longitude = $longitude;
+        return $this;
+    }
+
+    public function setLargeur(float $largeur): self
+    {
+        $this->largeur = $largeur;
+        return $this;
+    }
+
+    public function setPhotos(Collection $photos): self
+    {
+        $this->photos = $photos;
+        return $this;
     }
 
     public function toDTO(): SerieDTO
