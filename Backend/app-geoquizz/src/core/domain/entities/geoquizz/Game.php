@@ -4,6 +4,7 @@ namespace api_geoquizz\core\domain\entities\geoquizz;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use api_geoquizz\core\dto\GameDTO;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'game')]
@@ -16,6 +17,9 @@ class Game
 
     #[ORM\Column(type: Types::STRING, length: 48)]
     private string $userId;
+
+    #[ORM\Column(type: Types::STRING, length: 48)]
+    private string $nickname;
 
     #[ORM\Column(type: Types::JSON)]
     private array $photoIds;
@@ -35,7 +39,6 @@ class Game
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $startTime = null;
 
-    // Existing getters
     public function getId(): string
     {
         return $this->id;
@@ -43,6 +46,10 @@ class Game
     public function getUserId(): string
     {
         return $this->userId;
+    }
+    public function getNickname(): string
+    {
+        return $this->nickname;
     }
     public function getPhotoIds(): array
     {
@@ -81,6 +88,12 @@ class Game
         return $this;
     }
 
+    public function setNickname(string $nickname): self
+    {
+        $this->nickname = $nickname;
+        return $this;
+    }
+
     public function setSerieId(string $serieId): self
     {
         $this->serieId = $serieId;
@@ -115,5 +128,9 @@ class Game
     {
         $this->startTime = $time;
         return $this;
+    }
+    public function toDTO()
+    {
+        return new GameDTO($this);
     }
 }

@@ -16,36 +16,31 @@ class GetGameAction extends AbstractAction {
         $this->gameService = $gameService;
     }
     
-    public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
-        try {
-            if (!isset($args['id'])) {
-                throw new \InvalidArgumentException("Missing game ID in URL.");
-            }
-    
-            $gameId = $args['id']; // Récupère l'ID de l'URL
-            $game = $this->gameService->getGameById($gameId);
-    
-            if (!$game) {
-                return JsonRenderer::render($rs, 404, ['message' => 'Game not found']);
-            }
-    
-            return JsonRenderer::render($rs, 200, [
-                'gameId' => $game->getId(),
-                'score' => $game->getScore(),
-                'state' => $game->getState(),
-                'serieId' => $game->getSerieId(),
-                'photos' => $game->getScore(),
-                'current-photo-index' => $game->getCurrentPhotoIndex(),
-                'start-time' => $game->getStartTime(),
-                
-            ]);
-        } catch (\Exception $e) {
-            return JsonRenderer::render($rs, 400, [
-                'message' => $e->getMessage(),
-                'error' => get_class($e)
-            ]);
+    public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface 
+{
+    try {
+        if (!isset($args['id'])) {
+            throw new \InvalidArgumentException("Missing game ID in URL.");
         }
+        
+        $gameId = $args['id'];
+        $game = $this->gameService->getGameById($gameId);
+        
+        if (!$game) {
+            return JsonRenderer::render($rs,400, ['message' => 'Game not found']);
+        }
+
+        // Utiliser jsonSerialize() du DTO directement
+        return JsonRenderer::render($rs,200, [
+            'game' => $game
+        ]);
+    } catch (\Exception $e) {
+        return JsonRenderer::render($rs, 400,[
+            'message' => $e->getMessage(),
+            'error' => get_class($e)
+        ]);
     }
+}
     
 
 }

@@ -23,7 +23,7 @@ class CreateGameAction extends AbstractAction {
         $body = $rq->getParsedBody();
         if (!isset($body['serieId']) || !isset($body['userId'])) {
             $data = [
-                'message' => 'Parametre requis manquant: serieId and/or userId',
+                'message' => 'Parametre requis manquant: serieId et/ou userId',
                 'exception' => [
                     'type' => 'InvalidArgumentException',
                     'code' => 400,
@@ -105,10 +105,7 @@ class CreateGameAction extends AbstractAction {
         }
 
         $data = [
-            'gameId' => $game->getId(),
-            'links' => [
-                'self' => ['href' => '/games/' . $game->getId()]
-            ]
+            'gameId' => $game,
         ];
 
         return JsonRenderer::render($rs, 201, $data);
