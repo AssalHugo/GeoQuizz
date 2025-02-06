@@ -1,11 +1,11 @@
 <script>
 import { getGameById, getCurrentPhoto, getSerieById } from '@/services/httpClient';
-import MapComponent from '@/components/MapComponent.vue';
+// import MapComponent from '@/components/MapComponent.vue';
 
 export default {
-  components: {
-    MapComponent
-  },
+  // components: {
+  //   MapComponent
+  // },
   data() {
     return {
       game: null,
