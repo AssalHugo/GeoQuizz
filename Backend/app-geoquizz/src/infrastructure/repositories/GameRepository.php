@@ -11,14 +11,17 @@ use api_geoquizz\core\repositoryInterface\RepositoryConnectionException;
 use api_geoquizz\core\repositoryInterface\RepositoryException;
 use Doctrine\ORM\EntityManager;
 
-class GameRepository implements GameRepositoryInterface {
+class GameRepository implements GameRepositoryInterface
+{
     private EntityManager $entityManager;
 
-    public function __construct(EntityManager $entityManager) {
+    public function __construct(EntityManager $entityManager)
+    {
         $this->entityManager = $entityManager;
     }
 
-    public function save(Game $game): void {
+    public function save(Game $game): void
+    {
         try {
             if (!$this->entityManager->contains($game)) {
                 $game = $this->entityManager->merge($game);
@@ -36,7 +39,8 @@ class GameRepository implements GameRepositoryInterface {
         }
     }
 
-    public function findById(string $id): ?Game {
+    public function findById(string $id): ?Game
+    {
         try {
             $game = $this->entityManager->find(Game::class, $id);
         } catch (\Exception $e) {
@@ -54,5 +58,27 @@ class GameRepository implements GameRepositoryInterface {
         }
 
         return $game;
+    }
+
+    public function getHighestScoreBySerieForUser(string $serieId, string $userId): int
+    {
+        try {
+            $query = $this->entityManager->createQueryBuilder()
+                ->select('MAX(g.score)')
+                ->from(Game::class, 'g')
+                ->Where('g.serieId = :serieId')
+                ->andWhere('g.userId = :userId')
+                ->setParameter('userId', $userId)
+                ->setParameter('serieId', $serieId)
+                ->getQuery();
+
+            return (int)$query->getSingleScalarResult();
+        } catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
+            throw new RepositoryConnectionException("Erreur de connexion à la base de données", 503, $e);
+        } catch (\Doctrine\ORM\Exception\ORMException $e) {
+            throw new RepositoryException("Erreur lors de la récupération du score", 500, $e);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

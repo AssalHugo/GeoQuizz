@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 
+use api_geoquizz\application\actions\GetHighestScoreBySerieForUserAction;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
@@ -36,6 +37,7 @@ return function (App $app): App {
     $app->post('/users', CreateUserAction::class);
     $app->get('/users/{id}', GetUserByIdAction::class);
     $app->get('/users', GetUserByEmailAction::class);
+    $app->get('/users/{userId}/series/{serieId}/highest-score', GetHighestScoreBySerieForUserAction::class);
 
     return $app;
 };

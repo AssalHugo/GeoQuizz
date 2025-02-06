@@ -17,8 +17,9 @@ class GameService implements GameServiceInterface
 
     public function __construct(
         GameRepositoryInterface $gameRepository,
-        SerieDirectusInterface $serieService
-    ) {
+        SerieDirectusInterface  $serieService
+    )
+    {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
     }
@@ -55,7 +56,7 @@ class GameService implements GameServiceInterface
 
     public function startGame(GameDTO $game): void
     {
-        $game->state ='IN_PROGRESS';
+        $game->state = 'IN_PROGRESS';
         $game->startTime = (new \DateTimeImmutable());
         $this->gameRepository->save($game->toEntity());
     }
@@ -76,41 +77,40 @@ class GameService implements GameServiceInterface
     }
 
     public function updateGameProgress(GameDTO $game, float $latitude, float $longitude): int
-{
-    $currentPhoto = $this->getCurrentPhoto($game);
-    if (!$currentPhoto) {
-        throw new \Exception("Aucune photo actuelle trouvée.");
+    {
+        $currentPhoto = $this->getCurrentPhoto($game);
+        if (!$currentPhoto) {
+            throw new \Exception("Aucune photo actuelle trouvée.");
+        }
+
+        $distance = $this->calculateDistance(
+            $latitude,
+            $longitude,
+            $currentPhoto->getLatitude(),
+            $currentPhoto->getLongitude()
+        );
+
+        $startTime = $game->startTime ?? new \DateTimeImmutable();
+        $game->startTime = $startTime;
+
+        $responseTime = time() - $startTime->getTimestamp();
+        $score = $this->calculateScore($game, $distance, $responseTime);
+
+        $game->score += $score;
+        $game->currentPhotoIndex++;
+
+        if ($this->isFinished($game)) {
+            $this->endGame($game);
+        }
+
+        $this->gameRepository->save($game->toEntity());
+        return $score;
     }
 
-    $distance = $this->calculateDistance(
-        $latitude,
-        $longitude,
-        $currentPhoto->getLatitude(),
-        $currentPhoto->getLongitude()
-    );
-
-    $startTime = $game->startTime ?? new \DateTimeImmutable();
-    $game->startTime = $startTime;
-
-    $responseTime = time() - $startTime->getTimestamp();
-    $score = $this->calculateScore($game, $distance, $responseTime);
-
-    $game->score += $score;
-    $game->currentPhotoIndex++;
-
-    if ($this->isFinished($game)) {
-        $this->endGame($game);
-    }
-
-    $this->gameRepository->save($game->toEntity());
-    return $score;
-}
-
-    
 
     public function endGame(GameDTO $game): void
     {
-        $game->state= 'FINISHED';
+        $game->state = 'FINISHED';
         $this->gameRepository->save($game->toEntity());
     }
 
@@ -139,31 +139,36 @@ class GameService implements GameServiceInterface
     {
         $photoIds = $game->photoIds;
         $currentPhotoIndex = $game->currentPhotoIndex;
-    
+
         error_log("PhotoIds: " . json_encode($photoIds));
         error_log("Current Photo Index: " . $currentPhotoIndex);
-    
+
         if (empty($photoIds) || !isset($photoIds[$currentPhotoIndex])) {
             error_log("No valid photo ID found for the current index.");
             return null;
         }
-    
+
         $photoId = $photoIds[$currentPhotoIndex];
         error_log("Fetching photo with ID: " . $photoId);
-    
+
         $photo = $this->serieService->getPhotoBySerie($game->serieId)
             ->filter(fn($photo) => $photo->getId() === $photoId)
             ->first();
-    
+
         if (!$photo) {
             error_log("No photo found with ID: " . $photoId);
             return null;
         }
-    
+
         error_log("Photo found: " . var_export($photo, true));
         return $photo;
     }
-    
+
+    public function getHighestScoreBySerieForUser(string $serieId, string $userId): int
+    {
+        return $this->gameRepository->getHighestScoreBySerieForUser($serieId, $userId);
+    }
+
     public function getGameState(GameDTO $game): string
     {
         return $game->state;
@@ -174,7 +179,8 @@ class GameService implements GameServiceInterface
         float $lon1,
         float $lat2,
         float $lon2
-    ): float {
+    ): float
+    {
         $earthRadius = 6371000;
         $lat1 = deg2rad($lat1);
         $lon1 = deg2rad($lon1);
