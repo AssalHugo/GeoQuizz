@@ -15,7 +15,7 @@ export default {
   },
   mounted() {
     getSeries().then((series) => {
-      this.series = series
+      this.series = series.data
     })
   },
 }

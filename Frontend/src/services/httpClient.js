@@ -69,7 +69,7 @@ export function getSeries() {
 }
 
 export function login(email, password) {
-  return request('/auth/login', 'POST', { email: email, password: password })
+  return request('/auth/signin', 'POST', { email: email, password: password })
 }
 
 export function register(nickname, email, password) {

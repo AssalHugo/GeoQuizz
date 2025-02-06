@@ -5,7 +5,9 @@ declare(strict_types=1);
 
 return function (\Slim\App $app): \Slim\App {
 
-
+    $app->options('/{routes:.+}', function ($request, $response, $args) {
+        return $response;
+    });
 
     $app->get('/', \gateway_geo\application\actions\HomeAction::class);
     $app->get('/series', \gateway_geo\application\actions\GatewaySeriesAction::class);
@@ -18,10 +20,6 @@ return function (\Slim\App $app): \Slim\App {
     $app->post('/auth/signin', \gateway_geo\application\actions\GatewayLoginAction::class);
 
     $app->get('/auth/refresh', \gateway_geo\application\actions\GatewayRefreshAction::class);
-
-    $app->options('/{routes:.+}', function ($request, $response) {
-        return $response;
-    })->add(\gateway_geo\application\middlewares\Cors::class);
     $app->get('/games/{id}', \gateway_geo\application\actions\GatewayGetGameAction::class);
     $app->post('/games', \gateway_geo\application\actions\GatewayCreateGameAction::class);
     $app->patch('/games/{id}/start', \gateway_geo\application\actions\GatewayStartGameAction::class);

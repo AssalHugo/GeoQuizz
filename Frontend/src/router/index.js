@@ -36,7 +36,7 @@ const router = createRouter({
   ],
 })
 
-/*router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
   const isLogged = userStore.isAuthenticated;
   if (to.meta.requiresAuth && !isLogged) {
@@ -46,6 +46,6 @@ const router = createRouter({
   } else {
     next();
   }
-});*/
+});
 
 export default router
