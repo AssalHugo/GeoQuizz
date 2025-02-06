@@ -57,9 +57,9 @@ export default {
     </div>
 
     <!-- Image principale -->
-    <div class="absolute inset-0">
+    <div v-if="currentPhoto" class="absolute inset-0">
       <img
-        src="../assets/images/nancy/photo1.png"
+        :src="getImageUrl(currentPhoto.photo)"
         alt="Photo du lieu à deviner"
         class="w-full h-full object-cover"
       />
@@ -79,7 +79,7 @@ export default {
 
     <!-- Carte interactive -->
     <div v-if="serie"
-         class="absolute bottom-4 right-4 z-30 transition-all duration-300 ease-in-out transform hover:scale-225 hover:translate-x-[-5%] hover:translate-y-[-5%] origin-bottom-right">
+         class="absolute bottom-4 right-4 z-30 transition-all duration-300 ease-in-out transform hover:scale-200 hover:translate-x-[-5%] hover:translate-y-[-5%] origin-bottom-right">
       <div class="bg-white rounded-lg shadow-2xl overflow-hidden">
         <!-- Barre de style -->
         <div v-on:change="markerLat && markerLong" class="bg-gray-800 px-4 py-2">
