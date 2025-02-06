@@ -7,6 +7,7 @@ export default {
   data() {
     return {
       score: this.game.score,
+      validate: false,
       error: null,
     }
   },
@@ -15,7 +16,8 @@ export default {
       validateAnswer(this.game.id, this.markerLat, this.markerLong)
         .then((response) => {
           console.log(response);
-          this.score = this.score + response.data.score;
+          this.score = this.score + response.score;
+          this.validate = true;
         })
         .catch((error) => {
           console.error(error);
@@ -27,7 +29,18 @@ export default {
 
 
 <template>
-  <div class="min-h-screen bg-gray-900 relative overflow">
-    <button @click="validateAnswer" class="absolute top-0 right-0 m-4 bg-blue-500 text-white px-4 py-2 rounded-lg">Valider</button>
+  <div class="flex flex-col gap-2">
+    <!-- Score display -->
+    <div class="bg-black/60 backdrop-blur-sm rounded-lg px-4 py-2">
+      <p class="text-white">Score: {{ score }}</p>
+    </div>
+
+    <!-- Validate button -->
+    <button
+      @click="validateAnswer"
+      class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+    >
+      Valider
+    </button>
   </div>
 </template>

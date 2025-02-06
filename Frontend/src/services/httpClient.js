@@ -101,5 +101,5 @@ export function getSerieById(serieId) {
 }
 
 export function validateAnswer(gameId, lat, long) {
-  return request(`/games/${gameId}/answer`, 'POST', { lat: lat, long: long })
+  return request(`/games/${gameId}/answer`, 'POST', { latitude: lat, longitude: long })
 }

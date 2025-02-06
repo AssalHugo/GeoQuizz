@@ -16,8 +16,6 @@ use gateway_geo\application\actions\GatewayGetCurrentPhotoAction;
 use gateway_geo\application\actions\GatewayGetGameScoreAction;
 use gateway_geo\application\actions\GatewayGetGameStateAction;
 use gateway_geo\application\actions\GatewaySignInAction;
-use gateway_geo\application\actions\GatewayRegisterAction;
-use gateway_geo\application\actions\GatewayRefreshAction;
 use Psr\Container\ContainerInterface;
 
 $settings = require __DIR__ . '/settings.php';
