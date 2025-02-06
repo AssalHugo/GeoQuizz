@@ -31,7 +31,7 @@ const router = createRouter({
       path: '/game/:id',
       name: 'game',
       component: GameView,
-      meta: { requiresAuth: true },
+      meta: { requiresGuest: true },
     },
   ],
 })

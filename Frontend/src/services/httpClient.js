@@ -1,6 +1,6 @@
 import { useUserStore } from '@/stores/userStore.js'
 
-const BASE_URL = 'http://localhost:1000'
+const BASE_URL = 'http://localhost:1002'
 
 let isRefreshing = false
 let refreshSubscribers = []
@@ -90,4 +90,12 @@ export function joinGame(gameId) {
 
 export function getGameById(gameId) {
   return request(`/games/${gameId}`)
+}
+
+export function getCurrentPhoto(gameId) {
+  return request(`/games/${gameId}/current-photo`)
+}
+
+export function getSerieById(serieId) {
+  return request(`/series/${serieId}`)
 }
