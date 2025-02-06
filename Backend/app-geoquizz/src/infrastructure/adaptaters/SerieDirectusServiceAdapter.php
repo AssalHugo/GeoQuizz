@@ -22,8 +22,14 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
     public function getSerieById($id): SerieDTO
     {
         try {
+            $tokenDirectus = parse_ini_file('/var/php/../../tokenDirectus.ini')['TOKEN_DIRECTUS'];
+
             // Faire la requête à l'API Directus
-            $response = $this->client->request('GET', '/series/' . $id);
+            $response = $this->client->request('GET', '/items/series/' . $id, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $tokenDirectus
+                ],
+            ]);
             $data = json_decode($response->getBody()->getContents(), true);
             $data = $data['data'];
 
@@ -48,11 +54,16 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
     public function getPhotoBySerie($serieId): Collection
     {
         try {
+            $tokenDirectus = parse_ini_file('/var/php/../../tokenDirectus.ini')['TOKEN_DIRECTUS'];
+
             // Faire la requête à l'API Directus
-            $response = $this->client->request('GET', '/photos', [
+            $response = $this->client->request('GET', '/items/photos', [
                 'query' => [
                     'filter[serie_id][_eq]' => $serieId
-                ]
+                ],
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $tokenDirectus
+                ],
             ]);
             $data = json_decode($response->getBody()->getContents(), true)['data'];
 
@@ -81,8 +92,14 @@ class SerieDirectusServiceAdapter implements SerieDirectusInterface
     public function getAllSeries()
     {
         try {
+            $tokenDirectus = parse_ini_file('/var/php/../../tokenDirectus.ini')['TOKEN_DIRECTUS'];
+            
             // Faire la requête à l'API Directus
-            $response = $this->client->request('GET', '/series');
+            $response = $this->client->request('GET', '/items/series',[
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $tokenDirectus
+                ]
+            ]);
             $data = json_decode($response->getBody()->getContents(), true)['data'];
 
             // Créer une nouvelle collection de Serie
