@@ -28,7 +28,7 @@ export default {
         getCurrentPhoto(this.$route.params.id)
       ]);
       this.game = game;
-      this.serie = await getSerieById(game.serie_id);
+      this.serie = await getSerieById(game.serieId);
       this.currentPhoto = photo;
     } catch (error) {
       this.error = error.message;
@@ -51,7 +51,7 @@ export default {
     </div>
 
     <!-- Overlay sombre en haut -->
-    <!-- <div class="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/70 to-transparent h-32">
+    <div class="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/70 to-transparent h-32">
       <div class="container mx-auto px-6 py-4">
         <h1 class="text-3xl font-extrabold text-white mb-2">
           Partie de {{ game }}
@@ -60,12 +60,12 @@ export default {
           Photo {{ currentPhoto.photo }}
         </h2>
       </div>
-    </div> -->
+    </div>
 
     <!-- Carte en bas à droite -->
-    <div class="absolute bottom-4 right-4 w-96 h-64 z-10">
-      <MapComponent :center />
-    </div>
+    <!-- <div class="absolute bottom-4 right-4 w-96 h-64 z-10">
+      <MapComponent :center="[serie.latitude, serie.longitude]" />
+    </div> -->
 
     <!-- État de chargement -->
     <div v-if="!currentPhoto" class="absolute inset-0 flex items-center justify-center bg-gray-900">
