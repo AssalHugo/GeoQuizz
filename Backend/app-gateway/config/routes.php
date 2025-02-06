@@ -25,5 +25,7 @@ return function (\Slim\App $app): \Slim\App {
 
     $app->get('/auth/refresh', \gateway_geo\application\actions\GatewayRefreshAction::class);
 
+    $app->post('/tokens/validate', \gateway_geo\application\actions\GatewayValidateTokenAction::class);
+
     return $app;
 };

@@ -6,7 +6,7 @@ let isRefreshing = false
 let refreshSubscribers = []
 
 const request = async (endpoint, method = 'GET', body = null, isAuthRequest = false) => {
-  const token = localStorage.getItem('token')
+  const token = useUserStore().token
   const headers = {
     'Content-Type': 'application/json',
     ...(!isAuthRequest &&
@@ -89,5 +89,5 @@ export function joinGame(gameId) {
 }
 
 export function validateToken() {
-  return request('/tokens/validate', 'POST', null, true)
+  return request('/tokens/validate', 'POST');
 }

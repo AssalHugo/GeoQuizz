@@ -14,25 +14,23 @@ export const useUserStore = defineStore('user', {
     },
   },
   getters: {
-    isAuthenticated() {
-      if (!this.token) return false
-      //On vérifie si le token est valide
-      validateToken(this.token).then(
+    async isAuthenticated() {
+      if (!this.token) return Promise.resolve(false);
+      return validateToken().then(
         (response) => {
-          return response.ok;
+          return Promise.resolve(true);
         },
         (error) => {
-          console.error('API Error:', error)
-          return false
+          return Promise.resolve(false);
         }
       );
     },
-    //Retourne l'id de l'user
+    // Return the user's id
     user() {
-      if (!this.token) return null
-      const payload = JSON.parse(atob(this.token.split('.')[1]))
-      //On retourne la partie sub de l'user
-      if (payload.user) return payload.user.sub
+      if (!this.token) return null;
+      const payload = JSON.parse(atob(this.token.split('.')[1]));
+      // Return the user's sub part
+      if (payload.user) return payload.user.sub;
     },
   },
   persist: true,

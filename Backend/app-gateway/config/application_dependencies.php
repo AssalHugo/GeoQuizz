@@ -7,6 +7,7 @@ use gateway_geo\application\actions\GatewayRegisterAction;
 use gateway_geo\application\actions\GatewaySeriesAction;
 use gateway_geo\application\actions\GatewaySeriesByIdAction;
 use gateway_geo\application\actions\GatewayPhotosByIdAction;
+use gateway_geo\application\actions\GatewayValidateTokenAction;
 use Psr\Container\ContainerInterface;
 
 $settings = require __DIR__ . '/settings.php';
@@ -59,5 +60,9 @@ return
 
         GatewayRefreshAction::class => function (ContainerInterface $c) {
             return new GatewayRefreshAction($c->get('guzzle.client.auth'));
+        },
+
+        GatewayValidateTokenAction::class => function (ContainerInterface $c) {
+            return new GatewayValidateTokenAction($c->get('guzzle.client.auth'));
         },
     ];
