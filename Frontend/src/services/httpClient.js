@@ -6,56 +6,56 @@ let isRefreshing = false
 let refreshSubscribers = []
 
 const request = async (endpoint, method = 'GET', body = null, isAuthRequest = false) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token')
   const headers = {
     'Content-Type': 'application/json',
     ...(!isAuthRequest &&
       token && {
         Authorization: `Bearer ${token}`,
       }),
-  };
+  }
   const config = {
     method,
     headers,
-    credentials: 'include',
     ...(body && { body: JSON.stringify(body) }),
-  };
+  }
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, config);
+    const response = await fetch(`${BASE_URL}${endpoint}`, config)
     if (response.status === 403 || response.status === 401) {
       if (!isRefreshing) {
-        isRefreshing = true;
+        isRefreshing = true
         try {
-          const data = await refreshToken();
-          const userStore = useUserStore();
-          userStore.setToken(data.token);
-          refreshSubscribers.forEach((callback) => callback(data.token));
-          refreshSubscribers = [];
+          const data = await refreshToken()
+          const userStore = useUserStore()
+          userStore.setToken(data.token)
+          refreshSubscribers.forEach((callback) => callback(data.token))
+          refreshSubscribers = []
         } catch (error) {
-          console.error('API Error:', error);
-          throw error;
+          console.error('API Error:', error)
+          throw error
         } finally {
-          isRefreshing = false;
+          isRefreshing = false
         }
       }
       return new Promise((resolve) => {
         refreshSubscribers.push((token) => {
-          config.headers.Authorization = `Bearer ${token}`;
-          resolve(request(endpoint, method, body, isAuthRequest));
-        });
-      });
+          config.headers.Authorization = `Bearer ${token}`
+          resolve(request(endpoint, method, body, isAuthRequest))
+        })
+      })
     }
     if (!response.ok) {
-      const errorBody = await response.json();
-      throw new Error(errorBody.message || 'Something went wrong');
+      const errorBody = await response.json()
+      throw new Error(errorBody.message || 'Something went wrong')
     }
-    const contentType = response.headers.get('content-type');
-    return contentType && contentType.includes('application/json') ? await response.json() : null;
+    const contentType = response.headers.get('content-type')
+    return contentType && contentType.includes('application/json') ? await response.json() : null
   } catch (error) {
-    console.error('API Error:', error);
-    throw error;
+    console.error('API Error:', error)
+    throw error
   }
-};
+}
+
 function refreshToken() {
   return request('/auth/refresh', 'POST', null, true)
 }
@@ -69,7 +69,7 @@ export function getSeries() {
 }
 
 export function login(email, password) {
-  return request('/auth/login', 'POST', { email: email, password: password })
+  return request('/auth/signin', 'POST', { email: email, password: password })
 }
 
 export function register(nickname, email, password) {
