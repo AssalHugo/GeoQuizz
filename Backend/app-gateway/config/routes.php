@@ -14,5 +14,7 @@ return function (\Slim\App $app): \Slim\App {
 
     $app->get('/photos/{id}', \gateway_geo\application\actions\GatewayPhotosByIdAction::class);
 
+    $app->get('/games/{id}', \gateway_geo\application\actions\GatewayGetGameAction::class);
+
     return $app;
 };
