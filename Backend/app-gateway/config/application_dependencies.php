@@ -15,6 +15,7 @@ use gateway_geo\application\actions\GatewayGetGameStateAction;
 use gateway_geo\application\actions\GatewaySignInAction;
 use gateway_geo\application\actions\GatewayRegisterAction;
 use gateway_geo\application\actions\GatewayRefreshAction;
+use gateway_geo\application\actions\GetHighestScoreBySerieForUserAction;
 use Psr\Container\ContainerInterface;
 
 $settings = require __DIR__ . '/settings.php';
@@ -99,5 +100,9 @@ return
 
         GatewayRefreshAction::class => function (ContainerInterface $c) {
             return new GatewayRefreshAction($c->get('guzzle.client.auth'));
+        },
+
+        GetHighestScoreBySerieForUserAction::class => function (ContainerInterface $c) {
+            return new GetHighestScoreBySerieForUserAction($c->get('guzzle.client.geoquizz'));
         },
     ];

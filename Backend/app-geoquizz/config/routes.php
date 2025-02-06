@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 
 use api_geoquizz\application\actions\GetHighestScoreBySerieForUserAction;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
 use api_geoquizz\application\actions\CreateGameAction;
 use api_geoquizz\application\actions\EndGameAction;
