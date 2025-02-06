@@ -87,3 +87,7 @@ export function createGame(user_id, serie_id) {
 export function joinGame(gameId) {
   return request(`/games/${gameId}/start`, 'PUT')
 }
+
+export function validateToken() {
+  return request('/tokens/validate', 'POST', null, true)
+}
