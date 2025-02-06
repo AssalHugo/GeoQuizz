@@ -5,5 +5,5 @@ return  [
     'displayErrorDetails' => true,
     'logs.dir' => __DIR__ . '/../var/logs',
 
-    'gateway.api' => 'http://gateway.geoquizz/'
+    'directus.api' => 'http://api.directus:8055/'
 ];

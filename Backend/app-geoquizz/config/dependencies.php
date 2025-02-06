@@ -26,9 +26,9 @@ return [
 
     'settings' => $settings,
 
-    'guzzle.client.gateway' => function (ContainerInterface $container) {
+    'guzzle.client.directus' => function (ContainerInterface $container) {
         return new \GuzzleHttp\Client([
-            'base_uri' => $container->get('settings')['gateway.api']
+            'base_uri' => $container->get('settings')['directus.api']
         ]);
     },
 
@@ -58,7 +58,7 @@ return [
 
     SerieDirectusInterface::class => function (ContainerInterface $container) {
         return new SerieDirectusServiceAdapter(
-            $container->get('guzzle.client.gateway')
+            $container->get('guzzle.client.directus')
         );
     },
     GameRepositoryInterface::class => function (ContainerInterface $container) {
