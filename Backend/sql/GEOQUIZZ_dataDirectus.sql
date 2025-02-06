@@ -1,9 +1,9 @@
 -- Insérer une seule série pour Nancy, France
-INSERT INTO "serie" ("titre", "latitude", "longitude", "largeur") VALUES
+INSERT INTO "series" ("titre", "latitude", "longitude", "largeur") VALUES
 ('Carte de Nancy, France', 48.6884047, 6.1820169, 14201);
 
 -- Insérer 50 photos avec des coordonnées différentes autour de Nancy
-INSERT INTO "photo" ("photo", "latitude", "longitude", "adresse", "serie_id") VALUES
+INSERT INTO "photos" ("photo", "latitude", "longitude", "adresse", "serie_id") VALUES
 ('photo1.jpg', 48.6921, 6.1844, '2 Rue Claude Charles, 54000 Nancy, France', 1),
 ('photo2.jpg', 48.6935, 6.1761, '15 Place Carnot, 54000 Nancy, France', 1),
 ('photo3.jpg', 48.6948, 6.1703, '57 Rue Isabey, 54000 Nancy, France', 1),

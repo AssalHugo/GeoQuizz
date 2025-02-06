@@ -3,9 +3,10 @@
 namespace api_geoquizz\infrastructure\repositories;
 
 use api_geoquizz\core\domain\entities\geoquizz\Game;
+use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 use Doctrine\ORM\EntityManager;
 
-class GameRepository {
+class GameRepository implements GameRepositoryInterface {
     private EntityManager $entityManager;
 
     public function __construct(EntityManager $entityManager) {

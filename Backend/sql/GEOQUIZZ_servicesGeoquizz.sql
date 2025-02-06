@@ -1,9 +1,12 @@
-CREATE TABLE "Game" (
-  "id" UUID PRIMARY KEY,
-  "serie_id" int,
-  "score" int,
-  "state" varchar,
-  "user_id" UUID
+CREATE TABLE game (
+    id VARCHAR(48) PRIMARY KEY,
+    userId VARCHAR(48) NOT NULL,
+    photoIds JSONB NOT NULL,
+    serieId VARCHAR(48) NOT NULL,
+    score INT DEFAULT 0 NOT NULL,
+    state VARCHAR(20) NOT NULL,
+    currentPhotoIndex INT DEFAULT 0 NOT NULL,
+    startTime TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE "user" (

@@ -2,3 +2,4 @@
 app-gateway/vendor/
 app-geoquizz/vendor/
 app-auth/vendor/
+*.ini
