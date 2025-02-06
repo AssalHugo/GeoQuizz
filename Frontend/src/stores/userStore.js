@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { validateToken } from '@/services/httpClient.js'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -14,16 +13,8 @@ export const useUserStore = defineStore('user', {
     },
   },
   getters: {
-    async isAuthenticated() {
-      if (!this.token) return Promise.resolve(false);
-      return validateToken().then(
-        (response) => {
-          return Promise.resolve(true);
-        },
-        (error) => {
-          return Promise.resolve(false);
-        }
-      );
+    isAuthenticated() {
+      return !!this.token
     },
     // Return the user's id
     user() {
