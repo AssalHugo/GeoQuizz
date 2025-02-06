@@ -1,6 +1,6 @@
 CREATE TABLE game (
     id VARCHAR(48) PRIMARY KEY,
-    userId VARCHAR(48) NOT NULL,
+    userId UUID NOT NULL,
     photoIds JSONB NOT NULL,
     serieId VARCHAR(48) NOT NULL,
     score INT DEFAULT 0 NOT NULL,
@@ -15,4 +15,4 @@ CREATE TABLE "user" (
   "email" varchar
 );
 
-ALTER TABLE "Game" ADD FOREIGN KEY ("user_id") REFERENCES "user" ("id");
+ALTER TABLE "game" ADD FOREIGN KEY ("userid") REFERENCES "user" ("id");
