@@ -4,14 +4,14 @@ namespace api_geoquizz\application\actions;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use api_geoquizz\core\services\GameService;
+use api_geoquizz\core\services\GameServiceInterface;
 use Slim\Psr7\Response;
 use Slim\App;
 
 class GetGameStateAction extends AbstractAction {
-    private GameService $gameService;
+    private GameServiceInterface $gameService;
     
-    public function __construct(GameService $gameService) {
+    public function __construct(GameServiceInterface $gameService) {
         $this->gameService = $gameService;
     }
     

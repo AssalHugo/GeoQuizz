@@ -27,5 +27,7 @@ return function (\Slim\App $app): \Slim\App {
         return $response;
     })->add(\gateway_geo\application\middlewares\Cors::class);
 
+    $app->get('/games/{id}', \gateway_geo\application\actions\GatewayGetGameAction::class);
+
     return $app;
 };
