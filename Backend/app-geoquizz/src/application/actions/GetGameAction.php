@@ -33,6 +33,11 @@ class GetGameAction extends AbstractAction {
                 'gameId' => $game->getId(),
                 'score' => $game->getScore(),
                 'state' => $game->getState(),
+                'serieId' => $game->getSerieId(),
+                'photos' => $game->getScore(),
+                'current-photo-index' => $game->getCurrentPhotoIndex(),
+                'start-time' => $game->getStartTime(),
+                
             ]);
         } catch (\Exception $e) {
             return JsonRenderer::render($rs, 400, [
