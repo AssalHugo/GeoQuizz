@@ -15,4 +15,4 @@ CREATE TABLE "user" (
   "email" varchar
 );
 
-ALTER TABLE "game" ADD FOREIGN KEY ("userid") REFERENCES "user" ("id");
+ALTER TABLE "game" ADD FOREIGN KEY ("userId") REFERENCES "user" ("id");
