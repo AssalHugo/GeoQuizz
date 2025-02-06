@@ -20,6 +20,9 @@ class GameRepository implements GameRepositoryInterface {
 
     public function save(Game $game): void {
         try {
+            if (!$this->entityManager->contains($game)) {
+                $game = $this->entityManager->merge($game);
+            }
             $this->entityManager->persist($game);
             $this->entityManager->flush();
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {

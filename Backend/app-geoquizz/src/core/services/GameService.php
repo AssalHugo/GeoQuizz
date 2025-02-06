@@ -5,6 +5,7 @@ namespace api_geoquizz\core\services;
 use api_geoquizz\core\domain\entities\geoquizz\Game;
 use api_geoquizz\core\domain\entities\seriesDirectus\Photo;
 use api_geoquizz\core\domain\entities\seriesDirectus\Serie;
+use api_geoquizz\core\dto\GameDTO;
 use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
 use Ramsey\Uuid\Uuid;
@@ -22,12 +23,12 @@ class GameService implements GameServiceInterface
         $this->serieService = $serieService;
     }
 
-    public function getGameById(string $gameId): ?Game
+    public function getGameById(string $gameId): ?GameDTO
     {
-        return $this->gameRepository->findById($gameId);
+        return $this->gameRepository->findById($gameId)->toDTO();
     }
 
-    public function createGame(string $serieId, string $userId): Game
+    public function createGame(string $serieId, string $userId): GameDTO
     {
         $game = new Game();
         $serie = $this->serieService->getSerieById($serieId);
@@ -44,22 +45,22 @@ class GameService implements GameServiceInterface
             ->setCurrentPhotoIndex(1);
 
         $this->gameRepository->save($game);
-        return $game;
+        return $game->toDTO();
     }
 
-    public function isFinished(Game $game): bool
+    public function isFinished(GameDTO $game): bool
     {
-        return $game->getCurrentPhotoIndex() >= count($game->getPhotoIds());
+        return $game->currentPhotoIndex >= count($game->photoIds);
     }
 
-    public function startGame(Game $game): void
+    public function startGame(GameDTO $game): void
     {
-        $game->setState('IN_PROGRESS')
-            ->setStartTime(new \DateTimeImmutable());
-        $this->gameRepository->save($game);
+        $game->state ='IN_PROGRESS';
+        $game->startTime = (new \DateTimeImmutable());
+        $this->gameRepository->save($game->toEntity());
     }
 
-    public function calculateScore(Game $game, float $distance, float $responseTime): int
+    public function calculateScore(GameDTO $game, float $distance, float $responseTime): int
     {
         $points = 0;
         if ($distance < 100) $points = 5;
@@ -74,71 +75,70 @@ class GameService implements GameServiceInterface
         return $points * $multiplier;
     }
 
-    public function updateGameProgress(Game $game, float $latitude, float $longitude): int
-    {
-        $currentPhoto = $this->getCurrentPhoto($game);
-        $distance = $this->calculateDistance(
-            $latitude,
-            $longitude,
-            $currentPhoto->getLatitude(),
-            $currentPhoto->getLongitude()
-        );
-    
-        // Vérification si getStartTime() est null
-        $startTime = $game->getStartTime();
-        if ($startTime === null) {
-            // Si startTime est null, utiliser l'heure actuelle comme valeur par défaut
-            $startTime = new \DateTimeImmutable();
-            // Optionnel : vous pouvez également vouloir mettre à jour la startTime ici si elle est nulle
-            $game->setStartTime($startTime);
-        }
-    
-        $responseTime = time() - $startTime->getTimestamp();
-        $score = $this->calculateScore($game, $distance, $responseTime);
-    
-        $game->setScore($game->getScore() + $score)
-            ->setCurrentPhotoIndex($game->getCurrentPhotoIndex() + 1);
-    
-        if ($this->isFinished($game)) {
-            $this->endGame($game);
-        }
-    
-        $this->gameRepository->save($game);
-        return $score;
-    }
-    
-
-    public function endGame(Game $game): void
-    {
-        $game->setState('FINISHED');
-        $this->gameRepository->save($game);
+    public function updateGameProgress(GameDTO $game, float $latitude, float $longitude): int
+{
+    $currentPhoto = $this->getCurrentPhoto($game);
+    if (!$currentPhoto) {
+        throw new \Exception("Aucune photo actuelle trouvée.");
     }
 
-    public function saveGameResult(Game $game): bool
+    $distance = $this->calculateDistance(
+        $latitude,
+        $longitude,
+        $currentPhoto->getLatitude(),
+        $currentPhoto->getLongitude()
+    );
+
+    $startTime = $game->startTime ?? new \DateTimeImmutable();
+    $game->startTime = $startTime;
+
+    $responseTime = time() - $startTime->getTimestamp();
+    $score = $this->calculateScore($game, $distance, $responseTime);
+
+    $game->score += $score;
+    $game->currentPhotoIndex++;
+
+    if ($this->isFinished($game)) {
+        $this->endGame($game);
+    }
+
+    $this->gameRepository->save($game->toEntity());
+    return $score;
+}
+
+    
+
+    public function endGame(GameDTO $game): void
+    {
+        $game->state= 'FINISHED';
+        $this->gameRepository->save($game->toEntity());
+    }
+
+    public function saveGameResult(GameDTO $game): bool
     {
         try {
-            $this->gameRepository->save($game);
+            $this->gameRepository->save($game->toEntity());
             return true;
         } catch (\Exception $e) {
             return false;
         }
     }
 
-    public function getGamePhotos(Game $game): array
+    public function getGamePhotos(GameDTO $game): array
     {
         $photos = [];
-        foreach ($game->getPhotoIds() as $photoId) {
-            $photos[] = $this->serieService->getPhotoBySerie($game->getSerieId())
+        foreach ($game->photoIds as $photoId) {
+            $photos[] = $this->serieService->getPhotoBySerie($game->serieId)
                 ->filter(fn($photo) => $photo->getId() === $photoId)
                 ->first();
         }
         return $photos;
     }
 
-    public function getCurrentPhoto(Game $game): ?Photo
+    public function getCurrentPhoto(GameDTO $game): ?Photo
     {
-        $photoIds = $game->getPhotoIds();
-        $currentPhotoIndex = $game->getCurrentPhotoIndex();
+        $photoIds = $game->photoIds;
+        $currentPhotoIndex = $game->currentPhotoIndex;
     
         error_log("PhotoIds: " . json_encode($photoIds));
         error_log("Current Photo Index: " . $currentPhotoIndex);
@@ -151,7 +151,7 @@ class GameService implements GameServiceInterface
         $photoId = $photoIds[$currentPhotoIndex];
         error_log("Fetching photo with ID: " . $photoId);
     
-        $photo = $this->serieService->getPhotoBySerie($game->getSerieId())
+        $photo = $this->serieService->getPhotoBySerie($game->serieId)
             ->filter(fn($photo) => $photo->getId() === $photoId)
             ->first();
     
@@ -164,9 +164,9 @@ class GameService implements GameServiceInterface
         return $photo;
     }
     
-    public function getGameState(Game $game): string
+    public function getGameState(GameDTO $game): string
     {
-        return $game->getState();
+        return $game->state;
     }
 
     private function calculateDistance(

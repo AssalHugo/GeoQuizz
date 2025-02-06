@@ -15,6 +15,9 @@ use gateway_geo\application\actions\GatewayEndGameAction;
 use gateway_geo\application\actions\GatewayGetCurrentPhotoAction;
 use gateway_geo\application\actions\GatewayGetGameScoreAction;
 use gateway_geo\application\actions\GatewayGetGameStateAction;
+use gateway_geo\application\actions\GatewaySignInAction;
+use gateway_geo\application\actions\GatewayRegisterAction;
+use gateway_geo\application\actions\GatewayRefreshAction;
 use Psr\Container\ContainerInterface;
 
 $settings = require __DIR__ . '/settings.php';
@@ -89,12 +92,12 @@ return
             return new GatewayGetGameStateAction($c->get('guzzle.client.geoquizz'));
         },
 
-        GatewayRegisterAction::class => function (ContainerInterface $c) {
-            return new GatewayRegisterAction($c->get('guzzle.client.auth'));
+        GatewaySignInAction::class => function (ContainerInterface $c) {
+            return new GatewaySignInAction($c->get('guzzle.client.auth'));
         },
 
-        GatewayLoginAction::class => function (ContainerInterface $c) {
-            return new GatewayLoginAction($c->get('guzzle.client.auth'));
+        GatewayRegisterAction::class => function (ContainerInterface $c) {
+            return new GatewayRegisterAction($c->get('guzzle.client.auth'));
         },
 
         GatewayRefreshAction::class => function (ContainerInterface $c) {

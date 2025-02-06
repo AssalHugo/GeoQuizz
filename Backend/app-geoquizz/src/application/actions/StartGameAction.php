@@ -25,7 +25,7 @@ class StartGameAction extends AbstractAction
     {
         if (!isset($args['id'])) {
             $data = [
-                'message' => 'Missing required parameter: gameId',
+                'message' => 'Parametre requis manquant: gameId',
                 'exception' => [
                     'type' => 'InvalidArgumentException',
                     'code' => 400,

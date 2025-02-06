@@ -10,16 +10,20 @@ return function (\Slim\App $app): \Slim\App {
     });
 
     $app->get('/', \gateway_geo\application\actions\HomeAction::class);
+
+    // Requête vers le microservice Auth
+    $app->post('/auth/signin', \gateway_geo\application\actions\GatewaySignInAction::class);
+    $app->post('/auth/register', \gateway_geo\application\actions\GatewayRegisterAction::class);
+    $app->post('/auth/refresh', \gateway_geo\application\actions\GatewayRefreshAction::class);
+
+
+    // Requête vers le microservice Directus
     $app->get('/series', \gateway_geo\application\actions\GatewaySeriesAction::class);
     $app->get('/series/{id}', \gateway_geo\application\actions\GatewaySeriesByIdAction::class);
     $app->get('/photos', \gateway_geo\application\actions\GatewayPhotosAction::class);
     $app->get('/photos/{id}', \gateway_geo\application\actions\GatewayPhotosByIdAction::class);
 
-    $app->post('/auth/register', \gateway_geo\application\actions\GatewayRegisterAction::class);
-
-    $app->post('/auth/signin', \gateway_geo\application\actions\GatewayLoginAction::class);
-
-    $app->get('/auth/refresh', \gateway_geo\application\actions\GatewayRefreshAction::class);
+    // Requête vers le microservice GeoQuizz
     $app->get('/games/{id}', \gateway_geo\application\actions\GatewayGetGameAction::class);
     $app->post('/games', \gateway_geo\application\actions\GatewayCreateGameAction::class);
     $app->patch('/games/{id}/start', \gateway_geo\application\actions\GatewayStartGameAction::class);
