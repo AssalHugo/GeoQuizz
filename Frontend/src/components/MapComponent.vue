@@ -6,22 +6,16 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 export default {
   name: 'MapComponent',
-  props: [{
-    center: {
-      type: Array,
-      default: () => [48.692054, 6.184417]
-    },
-    zoom: {
-      type: Number,
-      default: 13
-    }
-  }],
-  setup(props) {
+  props: ['serie'],
+  emits: ['change-marker-coord'],
+  setup(props, { emit }) {
     const mapContainer = ref(null);
     let map = null;
+    let marker = null;
+    let center = [props.serie.data.latitude, props.serie.data.longitude];
+    let zoom = 13;
 
     onMounted(() => {
-      // Fix pour l'icône de marqueur Leaflet
       delete L.Icon.Default.prototype._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url).href,
@@ -29,13 +23,26 @@ export default {
         shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).href,
       });
 
-      // Initialisation de la carte
-      map = L.map(mapContainer.value).setView(props.center, props.zoom);
+      // Initialize map
+      map = L.map(mapContainer.value).setView(center, zoom);
 
-      // Ajout du fond de carte OpenStreetMap
+      // Add tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(map);
+
+      // Add click handler
+      map.on('click', (event) => {
+        // Remove existing marker if any
+        if (marker) {
+          map.removeLayer(marker);
+        }
+        // Add new marker
+        marker = L.marker(event.latlng).addTo(map);
+        emit('change-marker-coord', event.latlng.lat, event.latlng.lng);
+      });
+
+
     });
 
     onUnmounted(() => {
@@ -47,7 +54,7 @@ export default {
     return {
       mapContainer
     };
-  }
+  },
 }
 </script>
 

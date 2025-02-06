@@ -36,16 +36,16 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  const userStore = useUserStore();
-  const isLogged = userStore.isAuthenticated;
-  if (to.meta.requiresAuth && !isLogged) {
-    next({ name: 'login' });
-  } else if (to.meta.requiresGuest && isLogged) {
-    next({ name: 'home' });
-  } else {
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   const userStore = useUserStore();
+//   const isLogged = userStore.isAuthenticated;
+//   if (to.meta.requiresAuth && !isLogged) {
+//     next({ name: 'login' });
+//   } else if (to.meta.requiresGuest && isLogged) {
+//     next({ name: 'home' });
+//   } else {
+//     next();
+//   }
+// });
 
 export default router
