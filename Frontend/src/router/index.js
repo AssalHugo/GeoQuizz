@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '@/views/DashboardView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import LoginView from '@/views/LoginView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 import { useUserStore } from '@/stores/userStore.js'
 
 const router = createRouter({
@@ -25,6 +26,12 @@ const router = createRouter({
       component: LoginView,
       meta: { requiresGuest: true },
     },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
+      meta: { requiresAuth: true },
+    }
   ],
 })
 
