@@ -21,12 +21,16 @@ export default {
       markerLat: 0,
       markerLong: 0,
       mapRef: null,
+      validate: false,
     }
   },
   methods: {
     changeMarkerCoord(lat, long) {
       this.markerLat = lat
       this.markerLong = long
+    },
+    changeValidate() {
+      this.validate = !this.validate
     },
     async initializeGame() {
       try {
@@ -84,7 +88,8 @@ export default {
             <h1 class="text-2xl font-bold text-white">{{ serie.data.titre }}</h1>
           </div>
           <div v-if="game" class="bg-black/60 backdrop-blur-sm rounded-lg">
-            <ButtonsComponent :game="game" :markerLat="markerLat" :markerLong="markerLong" @initialize-game="initializeGame" />
+            <ButtonsComponent :game="game" :markerLat="markerLat" :markerLong="markerLong" :validate="validate"
+              @initialize-game="initializeGame" @change-validate="changeValidate" />
           </div>
         </div>
       </div>
@@ -92,12 +97,16 @@ export default {
 
     <!-- Carte interactive -->
     <div v-if="serie" class="absolute bottom-6 right-6 z-30">
-      <div
-        class="transform transition-all duration-300 ease-in-out hover:scale-150 hover:-translate-x-20 hover:-translate-y-20">
+      <div :class="[
+        'transform transition-all duration-300 ease-in-out',
+        validate ? 'scale-200 -translate-x-50 -translate-y-40' : 'hover:scale-150 hover:-translate-x-25 hover:-translate-y-20'
+      ]">
         <div class="bg-white/90 backdrop-blur rounded-xl shadow-xl">
-          <div class="bg-gray-800 px-3 py-1.5 text-sm text-gray-200">Placez votre marqueur</div>
+          <div class="bg-gray-800 px-3 py-1.5 text-sm text-gray-200">
+            {{ validate ? currentPhoto.adresse : 'Placez votre marqueur' }}
+          </div>
           <div class="w-96 h-64">
-            <MapComponent ref="mapRef" :serie="serie" @change-marker-coord="changeMarkerCoord" />
+            <MapComponent ref="mapRef" :serie="serie" :validate="validate" @change-marker-coord="changeMarkerCoord" />
           </div>
         </div>
       </div>

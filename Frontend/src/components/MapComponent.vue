@@ -6,7 +6,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 
 export default {
   name: 'MapComponent',
-  props: ['serie'],
+  props: ['serie', 'validate'],
   emits: ['change-marker-coord'],
   setup(props, { emit }) {
     const mapContainer = ref(null);
@@ -49,6 +49,13 @@ export default {
       setupMap
     };
   },
+  watch: {
+    validate() {
+      if (this.validate) {
+        console.log(this.validate);
+      }
+    }
+  }
 }
 </script>
 
