@@ -27,6 +27,7 @@ services:
       - 1000:80
     volumes:
       - ./Backend/app-gateway:/var/php
+      - ./Backend/tokenDirectus.ini:/var/php/../../tokenDirectus.ini
     working_dir: /var/php
     command: php -S 0.0.0.0:80 -t public
 
@@ -41,6 +42,7 @@ services:
       - 1002:80
     volumes:
       - ./Backend/app-geoquizz:/var/php
+      - ./Backend/tokenDirectus.ini:/var/php/../../tokenDirectus.ini
     working_dir: /var/php
     depends_on:
       - geoquizz.db

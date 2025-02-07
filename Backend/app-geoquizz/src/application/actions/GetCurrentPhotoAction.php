@@ -4,15 +4,15 @@ namespace api_geoquizz\application\actions;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use api_geoquizz\core\services\GameService;
+use api_geoquizz\core\services\GameServiceInterface;
 use api_geoquizz\application\renderer\JsonRenderer;
 use api_geoquizz\core\services\game\GameServiceException;
 
 class GetCurrentPhotoAction extends AbstractAction 
 {
-    private GameService $gameService;
+    private GameServiceInterface $gameService;
     
-    public function __construct(GameService $gameService) {
+    public function __construct(GameServiceInterface $gameService) {
         $this->gameService = $gameService;
     }
 

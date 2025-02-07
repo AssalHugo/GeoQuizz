@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use app_auth\core\dto\CredentialsDTO;
 use app_auth\core\dto\UserDTO;
-use app_auth\core\services\exceptions\ServiceAuthInvalidDataException;
+use app_auth\core\services\auth\ServiceAuthInvalidDataException;
 use app_auth\application\renderer\JsonRenderer;
 use app_auth\core\services\geoquizz\ServiceGeoquizzInterface;
 

@@ -39,4 +39,19 @@ class GameDTO extends DTO
             'startTime' => $this->startTime?->format('c')
         ];
     }
+    public function toEntity(): Game
+    {
+        $game = new Game();
+        $game->setId($this->id)
+            ->setUserId($this->userId)
+            ->setPhotoIds($this->photoIds)
+            ->setSerieId($this->serieId)
+            ->setScore($this->score)
+            ->setState($this->state)
+            ->setCurrentPhotoIndex($this->currentPhotoIndex)
+            ->setStartTime($this->startTime);
+
+        return $game;
+    }
 }
+

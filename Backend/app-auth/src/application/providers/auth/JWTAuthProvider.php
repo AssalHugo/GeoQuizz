@@ -6,6 +6,9 @@ use app_auth\core\dto\AuthDTO;
 use app_auth\core\dto\CredentialsDTO;
 use app_auth\application\providers\auth\JWTManager;
 use app_auth\core\services\auth\ServiceAuthInterface;
+use app_auth\core\services\auth\ServiceAuthInvalidDataException;
+use Firebase\JWT\ExpiredException;
+use Firebase\JWT\SignatureInvalidException;
 
 class JWTAuthProvider implements AuthProviderInterface {
     private ServiceAuthInterface $authService;
@@ -68,21 +71,35 @@ class JWTAuthProvider implements AuthProviderInterface {
         return new AuthDTO($user->ID, $user->email, $newAccessToken, $newRefreshToken);
     }
 
-    public function getSignedInUser(string $token): AuthDTO {
-        $decodedToken = $this->jwtManager->decodeToken($token);
+    public function getSignedInUser(string $token): AuthDTO
+    {
+        try {
+            $decodedToken = $this->jwtManager->decodeToken($token);
 
-        if (!$decodedToken) {
-            throw new \Exception('Invalid token');
+            if (!$decodedToken) {
+                throw new SignatureInvalidException('Token invalide');
+            }
+
+            // Vérifier l'expiration
+            if (isset($decodedToken['exp']) && $decodedToken['exp'] < time()) {
+                throw new ExpiredException('Token expiré');
+            }
+
+            $user = $this->authService->getUserById($decodedToken['sub']);
+
+            if (!$user) {
+                throw new ServiceAuthInvalidDataException('Utilisateur non trouvé');
+            }
+
+            $refreshToken = $this->jwtManager->createRefreshToken($decodedToken);
+
+            return new AuthDTO($user->ID, $user->email, $token, $refreshToken);
+        } catch (SignatureInvalidException $e) {
+            throw $e;
+        } catch (ExpiredException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw new ServiceAuthInvalidDataException($e->getMessage());
         }
-
-        $user = $this->authService->getUserById($decodedToken['sub']);
-        
-        $refreshToken = $this->jwtManager->createRefreshToken($decodedToken);
-
-        if (!$user) {
-            throw new \Exception('User not found');
-        }
-
-        return new AuthDTO($user->ID, $user->email, $token, $refreshToken);
     }
 }

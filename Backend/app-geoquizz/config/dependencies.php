@@ -2,7 +2,9 @@
 
 use api_geoquizz\application\actions\CreateGameAction;
 use api_geoquizz\application\actions\CreateUserAction;
-use api_geoquizz\application\actions\GetGameAction;
+use api_geoquizz\application\actions\GetGamesAction;
+use api_geoquizz\application\actions\GetGameByIdAction;
+use api_geoquizz\application\actions\GetNextPhotoAction;
 use api_geoquizz\application\actions\GetUserByEmailAction;
 use api_geoquizz\application\actions\GetUserByIdAction;
 use api_geoquizz\application\actions\PlayGameAction;
@@ -26,9 +28,9 @@ return [
 
     'settings' => $settings,
 
-    'guzzle.client.gateway' => function (ContainerInterface $container) {
+    'guzzle.client.directus' => function (ContainerInterface $container) {
         return new \GuzzleHttp\Client([
-            'base_uri' => $container->get('settings')['gateway.api']
+            'base_uri' => $container->get('settings')['directus.api']
         ]);
     },
 
@@ -58,7 +60,7 @@ return [
 
     SerieDirectusInterface::class => function (ContainerInterface $container) {
         return new SerieDirectusServiceAdapter(
-            $container->get('guzzle.client.gateway')
+            $container->get('guzzle.client.directus')
         );
     },
     GameRepositoryInterface::class => function (ContainerInterface $container) {
@@ -76,15 +78,20 @@ return [
     CreateGameAction::class => function (ContainerInterface $container) {
         return new CreateGameAction($container->get(GameServiceInterface::class));
     },
-    GetGameAction::class => function (ContainerInterface $container){
-        return new GetGameAction($container->get(GameServiceInterface::class));
+    GetGamesAction::class => function (ContainerInterface $container){
+        return new GetGamesAction($container->get(GameServiceInterface::class));
+    },
+    GetGameByIdAction::class => function (ContainerInterface $container){
+        return new GetGameByIdAction($container->get(GameServiceInterface::class));
     },
     PlayGameAction::class => function (ContainerInterface $container){
         return new PlayGameAction($container->get(GameServiceInterface::class));
     },
     StartGameAction::class => function (ContainerInterface $container){
         return new StartGameAction($container->get(GameServiceInterface::class));
-
+    },
+    GetNextPhotoAction::class => function (ContainerInterface $container){
+        return new GetNextPhotoAction($container->get(GameServiceInterface::class));
     }
     
 ];

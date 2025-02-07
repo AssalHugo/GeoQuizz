@@ -6,7 +6,7 @@ use app_auth\core\dto\AuthDTO;
 use app_auth\core\dto\CredentialsDTO;
 use app_auth\core\repositoryInterfaces\AuthRepositoryInterface;
 use app_auth\core\services\auth\ServiceAuthInterface;
-use app_auth\core\services\exceptions\ServiceAuthInvalidDataException;
+use app_auth\core\services\auth\ServiceAuthInvalidDataException;
 
 class ServiceAuth implements ServiceAuthInterface
 {

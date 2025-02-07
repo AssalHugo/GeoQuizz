@@ -4,38 +4,38 @@ namespace api_geoquizz\core\domain\entities\geoquizz;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use api_geoquizz\core\dto\GameDTO;
 
 #[ORM\Entity]
-#[ORM\Table(name: 'game')]
+#[ORM\Table(name: '"game"')]
 class Game
 {
 
     #[ORM\Id]
-    #[ORM\Column(type: Types::STRING, length: 48)]
+    #[ORM\Column(name: '"id"', type: Types::STRING, length: 48)]
     private string $id;
 
-    #[ORM\Column(type: Types::STRING, length: 48)]
+    #[ORM\Column(name: '"userId"', type: Types::GUID)]
     private string $userId;
 
-    #[ORM\Column(type: Types::JSON)]
+    #[ORM\Column(name: '"photoIds"', type: Types::JSON)]
     private array $photoIds;
 
-    #[ORM\Column(type: Types::STRING, length: 48)]
+    #[ORM\Column(name: '"serieId"', type: Types::STRING, length: 48)]
     private string $serieId;
 
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(name: '"score"', type: Types::INTEGER)]
     private int $score = 0;
 
-    #[ORM\Column(type: Types::STRING, length: 20)]
+    #[ORM\Column(name: '"state"', type: Types::STRING, length: 20)]
     private string $state;
 
-    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\Column(name: '"currentPhotoIndex"', type: Types::INTEGER)]
     private int $currentPhotoIndex = 0;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[ORM\Column(name: '"startTime"',type: Types::DATETIME_IMMUTABLE)]
     private ?\DateTimeImmutable $startTime = null;
 
-    // Existing getters
     public function getId(): string
     {
         return $this->id;
@@ -115,5 +115,9 @@ class Game
     {
         $this->startTime = $time;
         return $this;
+    }
+    public function toDTO()
+    {
+        return new GameDTO($this);
     }
 }

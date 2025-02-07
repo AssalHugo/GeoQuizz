@@ -7,7 +7,10 @@ let userStore = useUserStore()
 
 <template>
   <header class="bg-gradient-to-r from-blue-600 to-blue-400 text-white p-6 shadow-lg">
-    <div v-if="userStore.token" class="container mx-auto flex justify-between items-center">
+    <div
+      v-if="userStore.isAuthenticated"
+      class="container mx-auto flex justify-between items-center"
+    >
       <RouterLink to="/" class="text-2xl font-extrabold tracking-wide hover:underline">
         GeoQuizz
       </RouterLink>

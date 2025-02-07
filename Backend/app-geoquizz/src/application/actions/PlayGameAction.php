@@ -21,7 +21,7 @@ class PlayGameAction extends AbstractAction {
 
         if (!isset($args['id'], $body['latitude'], $body['longitude'])) {
             $data = [
-                'message' => 'Missing required parameters: gameId, latitude, and longitude',
+                'message' => 'Parametre requis manquant: gameId, latitude, et longitude',
                 'exception' => [
                     'type' => 'InvalidArgumentException',
                     'code' => 400,
@@ -34,10 +34,10 @@ class PlayGameAction extends AbstractAction {
 
         try {
             $game = $this->gameService->getGameById($args['id']);
-            $this->gameService->updateGameProgress($game, $body['latitude'], $body['longitude']);
+            $this->gameService->giveAnswer($game, $body['latitude'], $body['longitude']);
 
             $data = [
-                'score' => $game->getScore(),
+                'score' => $game->score,
                 'links' => [
                     'self' => ['href' => '/games/' . $args['id']]
                 ]
@@ -47,7 +47,7 @@ class PlayGameAction extends AbstractAction {
 
         } catch (\Exception $e) {
             $data = [
-                'message' => 'Game not found',
+                'message' => 'Game not found'. $e->getMessage(),
                 'exception' => [
                     'type' => get_class($e),
                     'code' => 404,

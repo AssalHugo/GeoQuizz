@@ -6,7 +6,7 @@ use app_auth\application\providers\auth\AuthProviderInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use app_auth\core\dto\CredentialsDTO;
-use app_auth\core\services\exceptions\ServiceAuthInvalidDataException;
+use app_auth\core\services\auth\ServiceAuthInvalidDataException;
 use app_auth\application\renderer\JsonRenderer;
 
 class SignInAction extends AbstractAction
@@ -51,6 +51,7 @@ class SignInAction extends AbstractAction
 
         $data = [
             'token' => $authDTO->accessToken,
+            'refresh_token' => $authDTO->refreshToken,
             'links' => [
                 'self' => ['href' => '/auth/signin'],
                 'refresh' => ['href' => '/auth/refresh']
