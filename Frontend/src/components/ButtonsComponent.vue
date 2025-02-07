@@ -59,7 +59,7 @@ export default {
       @click="nextPhoto"
       class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
     >
-    Photo Suivante
+    Photo Suivante ({{ game.currentPhotoIndex + 1 }}/{{ game.photoIds.length }})
   </button>
   <button v-if="validate && game.currentPhotoIndex >= game.photoIds.length - 1"
       @click="nextPhoto"
