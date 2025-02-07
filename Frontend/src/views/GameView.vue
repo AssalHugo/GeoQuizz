@@ -3,12 +3,14 @@ import { getGameById, getCurrentPhoto, getSerieById } from '@/services/httpClien
 import MapComponent from '@/components/MapComponent.vue'
 import PhotoComponent from '@/components/PhotoComponent.vue'
 import ButtonsComponent from '@/components/ButtonsComponent.vue'
+import FinalResultComponent from '@/components/FinalResultComponent.vue'
 
 export default {
   components: {
     MapComponent,
     PhotoComponent,
     ButtonsComponent,
+    FinalResultComponent
   },
   data() {
     return {
@@ -29,8 +31,6 @@ export default {
     changeMarkerCoord(lat, long) {
       this.markerLat = lat
       this.markerLong = long
-      console.log(this.markerLat, this.markerLong)
-      console.log(this.currentPhoto)
     },
     changeValidate() {
       this.validate = !this.validate
@@ -60,11 +60,9 @@ export default {
               this.$refs.mapRef.setupMap();
             }
           })
-          console.log(this.game)
 
         } else if (this.game.state === "FINISHED") {
           this.finished = true
-          console.log('Game is finished')
         }
       } catch (error) {
         console.error('Error:', error)
@@ -124,7 +122,7 @@ export default {
             {{ validate ? currentPhoto.adresse : 'Placez votre marqueur' }}
           </div>
           <div class="w-[320px] h-[240px] sm:w-[400px] sm:h-[300px]">
-            <MapComponent ref="mapRef" :serie="serie" :validate="validate" @change-marker-coord="changeMarkerCoord" />
+            <MapComponent ref="mapRef" :serie="serie" :validate="validate" :current-photo="currentPhoto" @change-marker-coord="changeMarkerCoord" />
           </div>
         </div>
       </div>
@@ -146,6 +144,6 @@ export default {
     </div>
   </div>
   <div v-if="finished && game">
-    <h1>Le jeu est fini {{ game.score }}</h1>
+    <FinalResultComponent :score="game.score" />
   </div>
 </template>

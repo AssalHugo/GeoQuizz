@@ -18,7 +18,6 @@ export default {
           this.userStore.setToken(response.token)
           this.userStore.setRefreshToken(response.refresh_token)
           this.$router.push('/')
-          console.log('login successful')
         })
         .catch((error) => {
           this.error = error

@@ -1,19 +1,22 @@
 <script>
+const images = import.meta.glob('@/assets/images/**/*', { eager: true });
+
 export default {
   props: ['current-photo'],
-  methods: {
-    getImageUrl(name) {
-      console.log(new URL(`../assets/images/nancy/${name}`, import.meta.url))
-      return new URL(`../assets/images/nancy/${name}`, import.meta.url).href
-    },
-  },
+  computed: {
+    imageUrl() {
+      return images[`/src/assets/images/${this.currentPhoto.photo}`]?.default || '';
+    }
+  }
 }
 </script>
 
 <template>
   <img
-    :src="getImageUrl(currentPhoto.photo)"
+    v-if="imageUrl"
+    :src="imageUrl"
     alt="Photo du lieu à deviner"
     class="w-full h-full object-cover"
   />
+  <p v-else>Image introuvable</p>
 </template>
