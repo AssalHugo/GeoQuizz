@@ -1,3 +1,27 @@
+<script>
+import { createGame, joinGame } from '@/services/httpClient.js'
+import { useUserStore } from '@/stores/userStore.js'
+
+export default {
+  props: {
+    serie: {
+      type: Object,
+      required: true,
+    },
+  },
+  methods: {
+    joinSerie() {
+      const userStore = useUserStore()
+      createGame(userStore.user, this.serie.id).then((game) => {
+        console.log('Game created with id:', game.gameId.id)
+        joinGame(game.gameId.id).then(() => {
+          this.$router.push(`/game/${game.gameId.id}`)
+        })
+      })
+    },
+  },
+}
+</script>
 <template>
   <div class="flex justify-between items-center">
     <div>
@@ -13,29 +37,4 @@
     </div>
   </div>
 </template>
-
-<script>
-import { createGame, joinGame } from '@/services/httpClient.js'
-import { useUserStore } from '@/stores/userStore.js'
-
-export default {
-  props: {
-    serie: {
-      type: Object,
-      required: true,
-    },
-  },
-  methods: {
-    joinSerie() {
-      const userStore = useUserStore()
-      createGame(userStore.user, this.serie.id).then((id) => {
-        joinGame(id).then(() => {
-          this.$router.push(`/game/${id}`)
-        })
-      })
-    },
-  },
-}
-</script>
-
 <style scoped></style>
