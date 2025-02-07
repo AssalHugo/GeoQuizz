@@ -1,7 +1,7 @@
 -- Insérer une seule série pour Nancy, France
 INSERT INTO "series" ("titre", "latitude", "longitude", "largeur") VALUES
 ('Carte de Nancy, France', 48.6884047, 6.1820169, 13),
-('Carte de Paris, France', 48.866667, 2.333333, 15);
+('Carte de Paris, France', 48.866667, 2.333333, 11);
 
 -- Insérer 50 photos avec des coordonnées différentes autour de Nancy
 INSERT INTO "photos" ("photo", "latitude", "longitude", "adresse", "serie_id") VALUES
