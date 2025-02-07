@@ -25,29 +25,6 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
   }
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, config)
-    if (response.status === 403 || response.status === 401) {
-      if (!isRefreshing) {
-        isRefreshing = true
-        try {
-          const data = await refreshToken()
-          const userStore = useUserStore()
-          userStore.setToken(data.token)
-          refreshSubscribers.forEach((callback) => callback(data.token))
-          refreshSubscribers = []
-        } catch (error) {
-          console.error('API Error:', error)
-          throw error
-        } finally {
-          isRefreshing = false
-        }
-      }
-      return new Promise((resolve) => {
-        refreshSubscribers.push((token) => {
-          config.headers.Authorization = `Bearer ${token}`
-          resolve(request(endpoint, method, body, isAuthRequest))
-        })
-      })
-    }
     if (!response.ok) {
       const errorBody = await response.json()
       throw new Error(errorBody.message || 'Something went wrong')
@@ -55,13 +32,32 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
     const contentType = response.headers.get('content-type')
     return contentType && contentType.includes('application/json') ? await response.json() : null
   } catch (error) {
-    console.error('API Error:', error)
-    throw error
+    if (!isRefreshing) {
+      isRefreshing = true
+      try {
+        const data = await refreshToken()
+        const userStore = useUserStore()
+        userStore.setToken(data.token)
+        refreshSubscribers.forEach((callback) => callback(data.token))
+        refreshSubscribers = []
+      } catch (error) {
+        console.error('API Error:', error)
+        throw error
+      } finally {
+        isRefreshing = false
+      }
+    }
+    return new Promise((resolve) => {
+      refreshSubscribers.push((token) => {
+        config.headers.Authorization = `Bearer ${token}`
+        resolve(request(endpoint, method, body, isAuthRequest))
+      })
+    })
   }
 }
 
 function refreshToken() {
-  return request('/auth/refresh', 'POST', null, true)
+  return request('/auth/refresh', 'POST')
 }
 
 export function getGamesUser(userId) {
@@ -85,11 +81,18 @@ export function register(nickname, email, password) {
 }
 
 export function createGame(user_id, serie_id) {
-  return request('/games', 'POST', { user_id: user_id, serie_id: serie_id })
+  return request('/games', 'POST', { userId: user_id, serieId: serie_id })
 }
 
 export function joinGame(gameId) {
-  return request(`/games/${gameId}/start`, 'PUT')
+  return request(`/games/${gameId}/start`, 'PATCH')
+}
+
+export function getHighestScore(userId, serieId) {
+  if (serieId) {
+    return request(`/users/${userId}/highest-score?serie_id=${serieId}`)
+  }
+  return request(`/users/${userId}/highest-score`)
 }
 
 export function getGameById(gameId) {

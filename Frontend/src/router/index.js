@@ -31,28 +31,28 @@ const router = createRouter({
       path: '/game/:id',
       name: 'game',
       component: GameView,
-      meta: { requiresGuest: true },
+      meta: { requiresAuth: true },
     },
-    // {
-    //   path: '/profile',
-    //   name: 'profile',
-    //   component: ProfileView,
-    //   meta: { requiresAuth: true },
-    // },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
+      meta: { requiresAuth: true },
+    },
   ],
 })
 
-// router.beforeEach(async (to, from, next) => {
-//   const userStore = useUserStore()
-//   const isLogged = userStore.isAuthenticated
-//   console.log('isLogged', isLogged)
-//   if (to.meta.requiresAuth && !isLogged) {
-//     next({ name: 'login' })
-//   } else if (to.meta.requiresGuest && isLogged) {
-//     next({ name: 'home' })
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore()
+  const isLogged = userStore.isAuthenticated
+  console.log('isLogged', isLogged)
+  if (to.meta.requiresAuth && !isLogged) {
+    next({ name: 'login' })
+  } else if (to.meta.requiresGuest && isLogged) {
+    next({ name: 'home' })
+  } else {
+    next()
+  }
+})
 
 export default router

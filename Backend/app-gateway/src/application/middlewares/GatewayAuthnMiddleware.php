@@ -22,7 +22,7 @@ class GatewayAuthnMiddleware
         $route = $request->getUri()->getPath();
         $method = $request->getMethod();
 
-        $publicRoutes = ['/auth/signin', '/auth/register'];
+        $publicRoutes = ['/auth/signin', '/auth/register', '/auth/refresh'];
         $isPublicRoute = in_array($route, $publicRoutes) || $method === 'OPTIONS';
 
         if ($isPublicRoute) {

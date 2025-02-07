@@ -17,7 +17,7 @@ class Cors implements MiddlewareInterface
         $response = $response
             ->withHeader('Access-Control-Allow-Origin', $origin)
             ->withHeader('Access-Control-Allow-Methods', 'POST, PUT, GET, DELETE, HEAD, PATCH, OPTIONS')
-            ->withHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type')
+            ->withHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type, cache-control, expires, pragma')
             ->withHeader('Access-Control-Max-Age', 3600)
             ->withHeader('Access-Control-Allow-Credentials', 'true')
             ->withHeader('Content-Language', 'fr-FR')
