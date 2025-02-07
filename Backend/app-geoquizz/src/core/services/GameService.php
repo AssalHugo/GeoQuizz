@@ -131,35 +131,29 @@ class GameService implements GameServiceInterface
 
     public function getNextPhoto(GameDTO $game): ?Photo
     {
-        // Debug: afficher l'état du jeu
-        var_dump([
-            'currentPhotoIndex' => $game->currentPhotoIndex,
-            'totalPhotos' => count($game->photoIds),
-            'isFinished' => $this->isFinished($game)
-        ]);
-    
+
         // Vérifier si la partie est déjà terminée
         if ($this->isFinished($game)) {
             $this->endGame($game);
             return null;
         }
-    
+
         // Passer à la photo suivante
         if ($game->currentPhotoIndex < count($game->photoIds) - 1) {
             $game->currentPhotoIndex++;
-    
+
             // Sauvegarder en base
             $this->gameRepository->save($game->toEntity());
-    
+
             // Retourner la nouvelle photo
             return $this->getCurrentPhoto($game);
         }
-    
+
         // Si aucune photo suivante, marquer le jeu comme terminé
         $this->endGame($game);
         return null;
     }
-    
+
 
     public function endGame(GameDTO $game): void
     {
