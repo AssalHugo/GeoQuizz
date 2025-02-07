@@ -7,28 +7,35 @@ export default {
   data() {
     return {
       score: 0,
+      clicked: false,
       scoreAvant: this.game.score,
       error: null,
     }
   },
   methods: {
     validateAnswer() {
+      if (this.clicked) return;
+      this.clicked = true;
       validateAnswer(this.game.id, this.markerLat, this.markerLong)
         .then((response) => {
           this.score = response.score - this.scoreAvant;
           this.scoreAvant = response.score;
           this.$emit('change-validate');
+          this.clicked = false;
         })
         .catch((error) => {
           console.error(error);
         });
       },
     nextPhoto() {
+      if (this.clicked) return;
+      this.clicked = true;
       nextPhoto(this.game.id)
         .then(() => {
           this.$emit('change-validate');
           this.$emit('initialize-game');
           this.score = 0;
+          this.clicked = false;
         })
         .catch((error) => {
           console.error(error);

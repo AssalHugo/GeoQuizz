@@ -56,7 +56,6 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
   }
 }
 
-
 export function getGamesUser(userId) {
   return request(`/users/${userId}/games`)
 }
