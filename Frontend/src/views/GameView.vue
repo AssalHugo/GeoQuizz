@@ -17,6 +17,7 @@ export default {
       currentPhoto: null,
       error: null,
       loading: true,
+      finished: false,
       markerLat: 0,
       markerLong: 0,
     }
@@ -26,30 +27,34 @@ export default {
       this.markerLat = lat
       this.markerLong = long
     },
-  },
-  async mounted() {
-    try {
-      this.loading = true
-      const [game, photo] = await Promise.all([
-        getGameById(this.$route.params.id),
-        getCurrentPhoto(this.$route.params.id),
-      ])
-      this.game = game.game
-      console.log(game.game.serieId)
-      this.serie = await getSerieById(this.game.serieId)
-      console.log(this.serie)
-      this.currentPhoto = photo
-    } catch (error) {
-      this.error = error.message
-    } finally {
-      this.loading = false
+    async initializeGame(){
+      try {
+        this.loading = true
+        const [game] = await Promise.all([
+          getGameById(this.$route.params.id),
+        ])
+        this.game = game.game
+        console.log(this.game)
+        if(!game.state == "FINISHED"){
+          this.serie = await getSerieById(this.game.serieId)
+          this.currentPhoto = await getCurrentPhoto(this.$route.params.id)
+          this.finished = true
+        }
+      } catch (error) {
+        this.error = error.message
+      } finally {
+        this.loading = false
+      }
     }
   },
+  async mounted() {
+    this.initializeGame();
+  }
 }
 </script>
 
 <template>
-  <div class="h-screen relative bg-gray-900">
+  <div v-if="finished" class="h-screen relative bg-gray-900">
     <!-- Image principale -->
     <div v-if="currentPhoto" class="absolute inset-0">
       <PhotoComponent :current-photo="currentPhoto" />
@@ -73,8 +78,7 @@ export default {
     <!-- Carte interactive -->
     <div v-if="serie" class="absolute bottom-6 right-6 z-30">
       <div
-        class="transform transition-all duration-300 ease-in-out hover:scale-150 hover:-translate-x-20 hover:-translate-y-20"
-      >
+        class="transform transition-all duration-300 ease-in-out hover:scale-150 hover:-translate-x-20 hover:-translate-y-20">
         <div class="bg-white/90 backdrop-blur rounded-xl shadow-xl">
           <div class="bg-gray-800 px-3 py-1.5 text-sm text-gray-200">Placez votre marqueur</div>
           <div class="w-96 h-64">
@@ -85,31 +89,21 @@ export default {
     </div>
 
     <!-- Loader -->
-    <div
-      v-if="loading"
-      class="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50"
-    >
-      <svg
-        class="animate-spin h-12 w-12 text-white"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
+    <div v-if="loading" class="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <svg class="animate-spin h-12 w-12 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V4a10 10 0 00-10 10h2zm2 0a6 6 0 016-6V4a8 8 0 00-8 8h2zm6 0a4 4 0 014-4V4a6 6 0 00-6 6h2zm4 0a2 2 0 012-2V4a4 4 0 00-4 4h2z"
-        />
+        <path class="opacity-75" fill="currentColor"
+          d="M4 12a8 8 0 018-8V4a10 10 0 00-10 10h2zm2 0a6 6 0 016-6V4a8 8 0 00-8 8h2zm6 0a4 4 0 014-4V4a6 6 0 00-6 6h2zm4 0a2 2 0 012-2V4a4 4 0 00-4 4h2z" />
       </svg>
     </div>
 
     <!-- Erreur -->
-    <div
-      v-if="error"
-      class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-red-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg z-50 max-w-md"
-    >
+    <div v-if="error"
+      class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-red-500/90 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg z-50 max-w-md">
       {{ error }}
     </div>
+  </div>
+  <div v-if="!finished && game">
+    <h1>Le jeu est fini {{ game.score }}</h1>
   </div>
 </template>
