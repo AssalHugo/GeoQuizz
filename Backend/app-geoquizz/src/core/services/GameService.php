@@ -17,8 +17,9 @@ class GameService implements GameServiceInterface
 
     public function __construct(
         GameRepositoryInterface $gameRepository,
-        SerieDirectusInterface $serieService
-    ) {
+        SerieDirectusInterface  $serieService
+    )
+    {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
     }
@@ -61,7 +62,7 @@ class GameService implements GameServiceInterface
 
     public function startGame(GameDTO $game): void
     {
-        $game->state ='IN_PROGRESS';
+        $game->state = 'IN_PROGRESS';
         $game->startTime = (new \DateTimeImmutable());
         $this->gameRepository->save($game->toEntity());
     }
@@ -148,7 +149,7 @@ class GameService implements GameServiceInterface
 
     public function endGame(GameDTO $game): void
     {
-        $game->state= 'FINISHED';
+        $game->state = 'FINISHED';
         $this->gameRepository->save($game->toEntity());
     }
 
@@ -177,31 +178,36 @@ class GameService implements GameServiceInterface
     {
         $photoIds = $game->photoIds;
         $currentPhotoIndex = $game->currentPhotoIndex;
-    
+
         error_log("PhotoIds: " . json_encode($photoIds));
         error_log("Current Photo Index: " . $currentPhotoIndex);
-    
+
         if (empty($photoIds) || !isset($photoIds[$currentPhotoIndex])) {
             error_log("No valid photo ID found for the current index.");
             return null;
         }
-    
+
         $photoId = $photoIds[$currentPhotoIndex];
         error_log("Fetching photo with ID: " . $photoId);
-    
+
         $photo = $this->serieService->getPhotoBySerie($game->serieId)
             ->filter(fn($photo) => $photo->getId() === $photoId)
             ->first();
-    
+
         if (!$photo) {
             error_log("No photo found with ID: " . $photoId);
             return null;
         }
-    
+
         error_log("Photo found: " . var_export($photo, true));
         return $photo;
     }
-    
+
+    public function getHighestScoreBySerieForUser(string $serieId, string $userId): int
+    {
+        return $this->gameRepository->getHighestScoreBySerieForUser($serieId, $userId);
+    }
+
     public function getGameState(GameDTO $game): string
     {
         return $game->state;
