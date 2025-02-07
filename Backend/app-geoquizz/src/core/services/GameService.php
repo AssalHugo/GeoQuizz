@@ -57,7 +57,7 @@ class GameService implements GameServiceInterface
 
     public function isFinished(GameDTO $game): bool
     {
-        return $game->currentPhotoIndex = count($game->photoIds);
+        return $game->currentPhotoIndex >= count($game->photoIds);
     }
 
     public function startGame(GameDTO $game): void
