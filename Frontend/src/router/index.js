@@ -3,7 +3,6 @@ import DashboardView from '@/views/DashboardView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import LoginView from '@/views/LoginView.vue'
 import GameView from '@/views/GameView.vue'
-// import { name } from '@vue/eslint-config-prettier/skip-formatting'
 // import ProfileView from '@/views/ProfileView.vue'
 // import { useUserStore } from '@/stores/userStore.js'
 
@@ -14,7 +13,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: DashboardView,
-      meta: { requiresAuth: true },
+      meta: { requiresGuest: true },
     },
     {
       path: '/register',
