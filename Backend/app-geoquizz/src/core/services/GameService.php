@@ -8,7 +8,9 @@ use api_geoquizz\core\domain\entities\seriesDirectus\Serie;
 use api_geoquizz\core\dto\GameDTO;
 use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
+use api_geoquizz\core\services\user\UserServiceInterface;
 use Ramsey\Uuid\Uuid;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 use function PHPUnit\Framework\throwException;
 
@@ -16,13 +18,19 @@ class GameService implements GameServiceInterface
 {
     private GameRepositoryInterface $gameRepository;
     private SerieDirectusInterface $serieService;
+    private UserServiceInterface $userService;
+    private AMQPStreamConnection $connection;
 
     public function __construct(
         GameRepositoryInterface $gameRepository,
-        SerieDirectusInterface  $serieService
+        SerieDirectusInterface  $serieService,
+        UserServiceInterface $userService,
+        AMQPStreamConnection $connection
     ) {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
+        $this->userService = $userService;
+        $this->connection = $connection;
     }
 
     public function getGames(): array
@@ -53,6 +61,7 @@ class GameService implements GameServiceInterface
             ->setCurrentPhotoIndex(1);
 
         $this->gameRepository->save($game);
+        $this->sendMessageGame("CREATE", $game->getId());
         return $game->toDTO();
     }
 
@@ -72,7 +81,7 @@ class GameService implements GameServiceInterface
     {
         $distanceInMeters = $distance;
 
-        $points = match(true) {
+        $points = match (true) {
             $distanceInMeters < 100    => 10,   // Moins de 100m : parfait
             $distanceInMeters < 500    => 8,    // Moins de 500m
             $distanceInMeters < 1000   => 6,    // Moins de 1km
@@ -83,7 +92,7 @@ class GameService implements GameServiceInterface
             default                    => 0     // Au-delà de 10km
         };
 
-        $multiplier = match(true) {
+        $multiplier = match (true) {
             $responseTime < 10000  => 4,  // Moins de 10s
             $responseTime < 20000  => 2,  // Moins de 20s
             $responseTime < 30000  => 1,  // Moins de 30s
@@ -93,7 +102,7 @@ class GameService implements GameServiceInterface
         return $points * $multiplier;
     }
 
-    
+
     public function giveAnswer(GameDTO $game, float $latitude, float $longitude): int
     {
         $currentPhoto = $this->getCurrentPhoto($game);
@@ -254,5 +263,28 @@ class GameService implements GameServiceInterface
         );
 
         return $angle * $earthRadius; // Distance en mètres
+    }
+
+    public function sendMessageGame($message, $idGame)
+    {
+        $channel = $this->connection->channel();
+
+        $game = $this->getGameById($idGame);
+
+        $user = $this->userService->getUserById($game->userId);
+
+        $message = [
+            'message' => $message,
+            'user' => $user,
+            'game' => $game
+        ];
+
+        $jsonMessage = json_encode($message, JSON_THROW_ON_ERROR);
+
+        $msg = new \PhpAmqpLib\Message\AMQPMessage($jsonMessage);
+
+        $channel->basic_publish($msg, 'game.exchange', 'game.key');
+        $channel->close();
+        $this->connection->close();
     }
 }
