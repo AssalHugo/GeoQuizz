@@ -29,6 +29,8 @@ export default {
     changeMarkerCoord(lat, long) {
       this.markerLat = lat
       this.markerLong = long
+      console.log(this.markerLat, this.markerLong)
+      console.log(this.currentPhoto)
     },
     changeValidate() {
       this.validate = !this.validate
