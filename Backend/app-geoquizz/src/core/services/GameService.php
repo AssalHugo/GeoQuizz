@@ -249,15 +249,10 @@ class GameService implements GameServiceInterface
         $angle = 2 * asin(
             sqrt(
                 pow(sin($latDelta / 2), 2) +
-                cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)
+                    cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)
             )
         );
 
         return $angle * $earthRadius; // Distance en mètres
     }
-    
-        
-    
-    
-    
 }
