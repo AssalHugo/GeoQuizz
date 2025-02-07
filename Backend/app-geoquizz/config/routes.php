@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 
+use api_geoquizz\application\actions\GetGamesByUserAction;
 use api_geoquizz\application\actions\GetHighestScoreBySerieForUserAction;
 use Slim\App;
 use api_geoquizz\application\actions\CreateGameAction;
@@ -36,6 +37,7 @@ return function (App $app): App {
     $app->get('/users/{id}', GetUserByIdAction::class);
     $app->get('/users', GetUserByEmailAction::class);
     $app->get('/users/{userId}/series/{serieId}/highest-score', GetHighestScoreBySerieForUserAction::class);
+    $app->get('/users/{userId}/games', GetGamesByUserAction::class);
 
     return $app;
 };

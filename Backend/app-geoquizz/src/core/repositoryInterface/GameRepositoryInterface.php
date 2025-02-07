@@ -12,4 +12,6 @@ interface GameRepositoryInterface
     public function findById(string $id): ?Game;
 
     public function getHighestScoreBySerieForUser(string $serieId, string $userId);
+
+    public function getGamesByUser(string $userId): array;
 }

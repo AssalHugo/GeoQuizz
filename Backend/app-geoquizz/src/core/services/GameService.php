@@ -169,6 +169,17 @@ class GameService implements GameServiceInterface
         return $this->gameRepository->getHighestScoreBySerieForUser($serieId, $userId);
     }
 
+    public function getGamesByUser(string $userId): array
+    {
+        //On transforme les entités en DTO
+        $games = [];
+        foreach ($this->gameRepository->getGamesByUser($userId) as $game) {
+            $games[] = $game->toDTO();
+        }
+
+        return $games;
+    }
+
     public function getGameState(GameDTO $game): string
     {
         return $game->state;
