@@ -19,21 +19,39 @@ class GetHighestScoreBySerieForUserAction extends AbstractAction
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface
     {
         try {
+            if (!isset($args['userId'])) {
+                throw new \InvalidArgumentException("Missing user ID in URL.");
+            }
+
             $userId = $args['userId'];
-            $serieId = $args['serieId'];
 
-            $highestScore = $this->gameService->getHighestScoreBySerieForUser($serieId, $userId);
+            // Récupérer les query params
+            $queryParams = $rq->getQueryParams();
+            $serieId = $queryParams['serieId'] ?? null;
 
-            $data = [
-                'highestScore' => $highestScore,
-                'links' => [
-                    'self' => '/series/' . $serieId . '/users/' . $userId . '/highest-score',
-                    'user' => '/users/' . $userId,
-                    'serie' => '/series/' . $serieId
-                ]
-            ];
+            $Scores = $this->gameService->getHighestScoreBySerieForUser($serieId, $userId);
 
-            return JsonRenderer::render($rs, 200, $data);
+
+            if ($serieId == null) {
+                $data = [
+                    'score' => $Scores,
+                    'links' => [
+                        'self' => '/users/' . $userId . '/highest-score'
+                    ]
+                ];
+
+                return JsonRenderer::render($rs, 200, $data);
+            }
+            else {
+                $data = [
+                    'score' => $Scores,
+                    'links' => [
+                        'self' => '/users/' . $userId . '/series/' . $serieId . '/highest-score'
+                    ]
+                ];
+
+                return JsonRenderer::render($rs, 200, $data);
+            }
         } catch (\Exception $e) {
             $errorData = [
                 'error' => 'An error occurred while fetching the highest score.',
