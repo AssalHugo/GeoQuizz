@@ -72,7 +72,7 @@ class GameService implements GameServiceInterface
     {
         $distanceInMeters = $distance;
 
-        $points = match (true) {
+        $points = match(true) {
             $distanceInMeters < 100    => 10,   // Moins de 100m : parfait
             $distanceInMeters < 500    => 8,    // Moins de 500m
             $distanceInMeters < 1000   => 6,    // Moins de 1km
@@ -83,17 +83,17 @@ class GameService implements GameServiceInterface
             default                    => 0     // Au-delà de 10km
         };
 
-        $multiplier = match (true) {
-            $responseTime < 1000  => 4,  // Moins de 10s
-            $responseTime < 2000  => 2,  // Moins de 20s
-            $responseTime < 3000  => 1,  // Moins de 30s
+        $multiplier = match(true) {
+            $responseTime < 10000  => 4,  // Moins de 10s
+            $responseTime < 20000  => 2,  // Moins de 20s
+            $responseTime < 30000  => 1,  // Moins de 30s
             default             => 0   // Trop lent
         };
 
         return $points * $multiplier;
     }
 
-
+    
     public function giveAnswer(GameDTO $game, float $latitude, float $longitude): int
     {
         $currentPhoto = $this->getCurrentPhoto($game);
@@ -127,8 +127,7 @@ class GameService implements GameServiceInterface
 
     public function getNextPhoto(GameDTO $game): ?Photo
     {
-
-        // Vérifier si la partie est déjà terminée
+        // Vérifier si la partie est terminée
         if ($this->isFinished($game)) {
             $this->endGame($game);
             return null;
