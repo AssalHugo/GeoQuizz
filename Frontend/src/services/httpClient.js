@@ -1,11 +1,27 @@
 import { useUserStore } from '@/stores/userStore.js'
 
 const BASE_URL = 'http://localhost:1000'
+let hasRefreshed = false
 
-let isRefreshing = false
-let refreshSubscribers = []
+const request = async (endpoint, method = 'GET', body = null, isAuthRequest = false, refreshToken = null) => {
+  if (refreshToken) {
+    const response = await fetch(`${BASE_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
+        Expires: '0',
+        Authorization: `Bearer ${refreshToken}`,
+      }
+    })
+    if (!response.ok) {
+      throw new Error('Invalid refresh token')
+    }
+    const { token } = await response.json()
+    useUserStore().setToken(token)
+  }
 
-const request = async (endpoint, method = 'GET', body = null, isAuthRequest = false) => {
   const token = useUserStore().token
   const headers = {
     'Content-Type': 'application/json',
@@ -32,33 +48,14 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
     const contentType = response.headers.get('content-type')
     return contentType && contentType.includes('application/json') ? await response.json() : null
   } catch (error) {
-    if (!isRefreshing) {
-      isRefreshing = true
-      try {
-        const data = await refreshToken()
-        const userStore = useUserStore()
-        userStore.setToken(data.token)
-        refreshSubscribers.forEach((callback) => callback(data.token))
-        refreshSubscribers = []
-      } catch (error) {
-        console.error('API Error:', error)
-        throw error
-      } finally {
-        isRefreshing = false
-      }
+    if (!hasRefreshed) {
+      hasRefreshed = true
+      await request(endpoint, method, body, isAuthRequest, useUserStore().refreshToken)
     }
-    return new Promise((resolve) => {
-      refreshSubscribers.push((token) => {
-        config.headers.Authorization = `Bearer ${token}`
-        resolve(request(endpoint, method, body, isAuthRequest))
-      })
-    })
+    throw error
   }
 }
 
-function refreshToken() {
-  return request('/auth/refresh', 'POST')
-}
 
 export function getGamesUser(userId) {
   return request(`/users/${userId}/games`)
@@ -113,8 +110,4 @@ export function validateAnswer(gameId, lat, long) {
 
 export function nextPhoto(gameId) {
   return request(`/games/${gameId}/next-photo`)
-}
-
-export function validateToken() {
-  return request('/tokens/validate', 'POST')
 }

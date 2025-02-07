@@ -3,13 +3,18 @@ import { defineStore } from 'pinia'
 export const useUserStore = defineStore('user', {
   state: () => ({
     token: null,
+    refreshToken: null,
   }),
   actions: {
     setToken(token) {
       this.token = token
     },
+    setRefreshToken(token) {
+      this.refreshToken = token
+    },
     logout() {
       this.token = null
+      this.refreshToken = null
     },
   },
   getters: {
@@ -24,5 +29,6 @@ export const useUserStore = defineStore('user', {
       if (payload) return payload.sub;
     },
   },
+  //Ceci permet de persister les données de l'utilisateur même après un refresh de la page
   persist: true,
 })

@@ -16,6 +16,7 @@ export default {
       login(this.email, this.password)
         .then((response) => {
           this.userStore.setToken(response.token)
+          this.userStore.setRefreshToken(response.refresh_token)
           this.$router.push('/')
           console.log('login successful')
         })

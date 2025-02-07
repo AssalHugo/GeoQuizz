@@ -13,7 +13,7 @@ $c = $builder->build();
 $app = AppFactory::createFromContainer($c);
 
 $app->add(new Cors());
-// $app->add(GatewayAuthnMiddleware::class);
+$app->add(GatewayAuthnMiddleware::class);
 
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
