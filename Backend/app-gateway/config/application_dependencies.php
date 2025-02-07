@@ -18,6 +18,8 @@ use gateway_geo\application\actions\GatewayGetNextPhotoAction;
 use gateway_geo\application\actions\GatewayGetGameScoreAction;
 use gateway_geo\application\actions\GatewayGetGameStateAction;
 use gateway_geo\application\actions\GatewaySignInAction;
+use gateway_geo\application\actions\GetGamesByUserAction;
+use gateway_geo\application\actions\GetHighestScoreBySerieForUserAction;
 use gateway_geo\application\actions\GatewayGetHighestScoreBySerieForUserAction;
 use gateway_geo\application\middlewares\GatewayAuthnMiddleware;
 use Psr\Container\ContainerInterface;
@@ -122,5 +124,9 @@ return
 
         GatewayAuthnMiddleware::class => function (ContainerInterface $c) {
             return new GatewayAuthnMiddleware($c->get('guzzle.client.auth'));
+        },
+
+        GetGamesByUserAction::class => function (ContainerInterface $c) {
+            return new GetGamesByUserAction($c->get('guzzle.client.geoquizz'));
         },
     ];

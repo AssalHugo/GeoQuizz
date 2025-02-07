@@ -21,7 +21,7 @@ export const useUserStore = defineStore('user', {
       if (!this.token) return null;
       const payload = JSON.parse(atob(this.token.split('.')[1]));
       // Return the user's sub part
-      if (payload.user) return payload.user.sub;
+      if (payload) return payload.sub;
     },
   },
   persist: true,
