@@ -18,6 +18,7 @@ use gateway_geo\application\actions\GatewayGetNextPhotoAction;
 use gateway_geo\application\actions\GatewayGetGameScoreAction;
 use gateway_geo\application\actions\GatewayGetGameStateAction;
 use gateway_geo\application\actions\GatewaySignInAction;
+use gateway_geo\application\actions\GetGamesByUserAction;
 use gateway_geo\application\actions\GetHighestScoreBySerieForUserAction;
 use Psr\Container\ContainerInterface;
 
@@ -117,5 +118,9 @@ return
 
         GetHighestScoreBySerieForUserAction::class => function (ContainerInterface $c) {
             return new GetHighestScoreBySerieForUserAction($c->get('guzzle.client.geoquizz'));
+        },
+
+        GetGamesByUserAction::class => function (ContainerInterface $c) {
+            return new GetGamesByUserAction($c->get('guzzle.client.geoquizz'));
         },
     ];

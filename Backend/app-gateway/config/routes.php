@@ -32,6 +32,7 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/games/{id}/score', \gateway_geo\application\actions\GatewayGetGameScoreAction::class);
     $app->get('/games/{id}/state', \gateway_geo\application\actions\GatewayGetGameStateAction::class);
     $app->get('/users/{userId}/series/{serieId}/highest-score', \gateway_geo\application\actions\GetHighestScoreBySerieForUserAction::class);
+    $app->get('/users/{userId}/games', \gateway_geo\application\actions\GetGamesByUserAction::class);
 
     return $app;
 };
