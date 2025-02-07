@@ -17,6 +17,7 @@ export default {
         .then((response) => {
           this.userStore.setToken(response.token)
           this.$router.push('/')
+          console.log('login successful')
         })
         .catch((error) => {
           this.error = error

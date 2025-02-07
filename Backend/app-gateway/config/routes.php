@@ -2,15 +2,18 @@
 
 declare(strict_types=1);
 
+
 return function (\Slim\App $app): \Slim\App {
 
-    $app->get('/', \gateway_geo\application\actions\HomeAction::class);
+    $app->options('/{routes:.+}', function ($request, $response, $args) {
+        return $response;
+    });
 
     // Requête vers le microservice Auth
     $app->post('/auth/signin', \gateway_geo\application\actions\GatewaySignInAction::class);
     $app->post('/auth/register', \gateway_geo\application\actions\GatewayRegisterAction::class);
     $app->post('/auth/refresh', \gateway_geo\application\actions\GatewayRefreshAction::class);
-    
+
 
     // Requête vers le microservice Directus
     $app->get('/series', \gateway_geo\application\actions\GatewaySeriesAction::class);

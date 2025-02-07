@@ -9,4 +9,6 @@ return  [
     'auth.api' => 'http://app.auth/',
 
     'serieDirectus.api' => 'http://api.directus:8055',
+
+    'auth.api' => 'http://app.auth',
 ];
