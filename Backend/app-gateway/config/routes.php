@@ -23,6 +23,7 @@ return function (\Slim\App $app): \Slim\App {
     $app->post('/games', \gateway_geo\application\actions\GatewayCreateGameAction::class);
     $app->patch('/games/{id}/start', \gateway_geo\application\actions\GatewayStartGameAction::class);
     $app->post('/games/{id}/answer', \gateway_geo\application\actions\GatewayPlayGameAction::class);
+    $app->get('/games/{id}/next-photo', \gateway_geo\application\actions\GatewayGetNextPhotoAction::class);
     $app->patch('/games/{id}/end', \gateway_geo\application\actions\GatewayEndGameAction::class);
     $app->get('/games/{id}/current-photo', \gateway_geo\application\actions\GatewayGetCurrentPhotoAction::class);
     $app->get('/games/{id}/score', \gateway_geo\application\actions\GatewayGetGameScoreAction::class);

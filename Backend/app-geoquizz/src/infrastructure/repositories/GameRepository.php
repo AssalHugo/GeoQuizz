@@ -10,6 +10,11 @@ use api_geoquizz\core\repositoryInterface\RepositoryEntityValidationException;
 use api_geoquizz\core\repositoryInterface\RepositoryConnectionException;
 use api_geoquizz\core\repositoryInterface\RepositoryException;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\Query\QueryException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\ConnectionException;
 
 class GameRepository implements GameRepositoryInterface {
     private EntityManager $entityManager;
@@ -18,41 +23,68 @@ class GameRepository implements GameRepositoryInterface {
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * Sauvegarde un jeu en base de données.
+     * @throws RepositoryEntityConflictException
+     * @throws RepositoryEntityValidationException
+     * @throws RepositoryConnectionException
+     * @throws RepositoryException
+     */
     public function save(Game $game): void {
         try {
             if (!$this->entityManager->contains($game)) {
-                $game = $this->entityManager->merge($game);
+                try {
+                    $game = $this->entityManager->merge($game);
+                } catch (ORMException $e) {
+                    throw new RepositoryException("Erreur lors de la fusion de l'entité Game.", 500, $e);
+                }
             }
             $this->entityManager->persist($game);
             $this->entityManager->flush();
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-            throw new RepositoryEntityConflictException("Une entité avec ces données existe déjà", 409, $e);
-        } catch (\Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException $e) {
-            throw new RepositoryEntityValidationException("Référence invalide", 400, $e);
-        } catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
-            throw new RepositoryConnectionException("Erreur de connexion à la base de données", 503, $e);
-        } catch (\Doctrine\ORM\Exception\ORMException $e) {
-            throw new RepositoryException("Erreur lors de la sauvegarde", 500, $e);
+        } catch (UniqueConstraintViolationException $e) {
+            throw new RepositoryEntityConflictException("Ce jeu existe déjà.", 409, $e);
+        } catch (ForeignKeyConstraintViolationException $e) {
+            throw new RepositoryEntityValidationException("Violation de contrainte de clé étrangère.", 400, $e);
+        } catch (ConnectionException $e) {
+            throw new RepositoryConnectionException("Erreur de connexion à la base de données.", 503, $e);
+        } catch (ORMException $e) {
+            throw new RepositoryException("Erreur lors de la sauvegarde du jeu.", 500, $e);
         }
     }
 
+    /**
+     * Recherche un jeu par son ID.
+     * @throws RepositoryEntityNotFoundException
+     * @throws RepositoryException
+     */
     public function findById(string $id): ?Game {
         try {
             $game = $this->entityManager->find(Game::class, $id);
         } catch (\Exception $e) {
-            $errorMessage = sprintf(
-                "Erreur lors de la récupération du jeu (ID: %s): %s \nTrace: %s",
-                $id,
-                $e->getMessage(),
-                $e->getTraceAsString()
+            throw new RepositoryException(
+                sprintf("Erreur lors de la récupération du jeu (ID: %s): %s", $id, $e->getMessage()),
+                $e->getCode(),
+                $e
             );
-
-            throw new \Exception($errorMessage, $e->getCode(), $e);
         }
-        if ($game == null) {
-            throw new RepositoryEntityNotFoundException('Game not found (ID: ' . $id . ')');
+
+        if ($game === null) {
+            throw new RepositoryEntityNotFoundException("Le jeu avec l'ID {$id} est introuvable.");
         }
 
         return $game;
+    }
+
+    /**
+     * Récupère tous les jeux.
+     * @throws RepositoryException
+     */
+    public function findAll(): array {
+        try {
+            return $this->entityManager->createQuery("SELECT g FROM api_geoquizz\core\domain\entities\geoquizz\Game g")
+                ->getResult();
+        } catch (QueryException $e) {
+            throw new RepositoryException("Erreur lors de la récupération des jeux.", 500, $e);
+        }
     }
 }

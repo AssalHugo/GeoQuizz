@@ -18,7 +18,7 @@ class GetGameStateAction extends AbstractAction {
     public function __invoke(ServerRequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface {
         $game = $this->gameService->getGameById($args['gameId']);
         
-        $rs->getBody()->write(json_encode(['status' => $game->getState()]));
+        $rs->getBody()->write(json_encode(['status' => $game->state]));
         return $rs->withHeader('Content-Type', 'application/json');
     }
 }

@@ -10,6 +10,7 @@ use gateway_geo\application\actions\GatewayStartGameAction;
 use gateway_geo\application\actions\GatewayPlayGameAction;
 use gateway_geo\application\actions\GatewayEndGameAction;
 use gateway_geo\application\actions\GatewayGetCurrentPhotoAction;
+use gateway_geo\application\actions\GatewayGetNextPhotoAction;
 use gateway_geo\application\actions\GatewayGetGameScoreAction;
 use gateway_geo\application\actions\GatewayGetGameStateAction;
 use gateway_geo\application\actions\GatewaySignInAction;
@@ -80,7 +81,9 @@ return
         GatewayGetCurrentPhotoAction::class => function (ContainerInterface $c) {
             return new GatewayGetCurrentPhotoAction($c->get('guzzle.client.geoquizz'));
         },
-
+        GatewayGetNextPhotoAction::class => function (ContainerInterface $c) {
+            return new GatewayGetNextPhotoAction($c->get('guzzle.client.geoquizz'));
+        },
         GatewayGetGameScoreAction::class => function (ContainerInterface $c) {
             return new GatewayGetGameScoreAction($c->get('guzzle.client.geoquizz'));
         },
