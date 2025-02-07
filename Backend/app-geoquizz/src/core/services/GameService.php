@@ -71,33 +71,26 @@ class GameService implements GameServiceInterface
 
     public function calculateScore(GameDTO $game, float $distance, float $responseTime): int
     {
-        $points = 0;
+        // Conversion en mètres
+        $distanceInMeters = $distance;
     
-        // Gérer les petites distances en attribuant un score plus élevé
-        if ($distance < 0.01) {  // Moins de 10 mètres
-            $points = 10;
-        } elseif ($distance < 0.05) {  // Moins de 50 mètres
-            $points = 8;
-        } elseif ($distance < 0.1) {  // Moins de 100 mètres
-            $points = 6;
-        } elseif ($distance < 0.2) {  // Moins de 200 mètres
-            $points = 4;
-        } else {
-            $points = 2;
-        }
+        $points = match(true) {
+            $distanceInMeters < 100   => 10,   // Moins de 10m : parfait
+            $distanceInMeters < 500   => 8,    // Moins de 50m
+            $distanceInMeters < 1000  => 6,    // Moins de 100m
+            $distanceInMeters < 2000  => 4,    // Moins de 200m
+            $distanceInMeters < 5000  => 2,    // Moins de 500m
+            default                  => 0     // Au-delà
+        };
     
-        // Ajuster les points en fonction du temps de réponse
-        $multiplier = 1;
-        if ($responseTime < 5) {
-            $multiplier = 4;
-        } elseif ($responseTime < 10) {
-            $multiplier = 2;
-        } 
-    var_dump($responseTime);
-        // Calculer le score final
-        $finalScore = $points * $multiplier;
+        $multiplier = match(true) {
+            $responseTime < 10  => 4,  // Moins de 5s
+            $responseTime < 20 => 2,  // Moins de 10s
+            $responseTime < 30 => 1,  // Moins de 20s
+            default            => 0   // Trop lent
+        };
     
-        return $finalScore;
+        return $points * $multiplier;
     }
     
     public function giveAnswer(GameDTO $game, float $latitude, float $longitude): int
@@ -244,27 +237,29 @@ class GameService implements GameServiceInterface
         float $lat1,
         float $lon1,
         float $lat2,
-        float $lon2,
-        float $largeur
+        float $lon2
     ): float {
-        // Calculer la différence entre les latitudes et longitudes
-        $latDiff = abs($lat2 - $lat1);
-        $lonDiff = abs($lon2 - $lon1);
+        $earthRadius = 6371000; // Rayon de la Terre en mètres
     
-        // Afficher les différences de latitude et de longitude
-        var_dump("Latitude Difference: ", $latDiff);
-        var_dump("Longitude Difference: ", $lonDiff);
+        // Conversion des degrés en radians
+        $latFrom = deg2rad($lat1);
+        $lonFrom = deg2rad($lon1);
+        $latTo = deg2rad($lat2);
+        $lonTo = deg2rad($lon2);
     
-        // Calculer la distance approximative
-        $distance = ($latDiff + $lonDiff) * 111;  // 1 degré de latitude ≈ 111 km
+        // Différences de coordonnées
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
     
-        // Ajuster la distance en fonction de la largeur
-        $adjustedDistance = $distance * (1 + $largeur / 1000); // Ajuste la distance en fonction de la largeur
+        // Formule Haversine
+        $angle = 2 * asin(
+            sqrt(
+                pow(sin($latDelta / 2), 2) +
+                cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)
+            )
+        );
     
-        // Affichage de la distance ajustée
-        var_dump("Adjusted Distance: ", $adjustedDistance);
-    
-        return $adjustedDistance;
+        return $angle * $earthRadius; // Distance en mètres
     }
     
         
