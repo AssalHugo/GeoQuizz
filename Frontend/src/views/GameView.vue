@@ -27,7 +27,7 @@ export default {
       this.markerLat = lat
       this.markerLong = long
     },
-    async initializeGame(){
+    async initializeGame() {
       try {
         this.loading = true
         const [game] = await Promise.all([
@@ -35,9 +35,10 @@ export default {
         ])
         this.game = game.game
         console.log(this.game)
-        if(!game.state == "FINISHED"){
+        if (this.game.state == "IN_PROGRESS") {
           this.serie = await getSerieById(this.game.serieId)
           this.currentPhoto = await getCurrentPhoto(this.$route.params.id)
+        } else if ( this.game.state == "FINISHED") {
           this.finished = true
         }
       } catch (error) {
@@ -54,7 +55,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="finished" class="h-screen relative bg-gray-900">
+  <div v-if="!finished" class="h-screen relative bg-gray-900">
     <!-- Image principale -->
     <div v-if="currentPhoto" class="absolute inset-0">
       <PhotoComponent :current-photo="currentPhoto" />
@@ -69,7 +70,7 @@ export default {
             <h1 class="text-2xl font-bold text-white">{{ serie.data.titre }}</h1>
           </div>
           <div v-if="game" class="bg-black/60 backdrop-blur-sm rounded-lg">
-            <ButtonsComponent :game="game" :markerLat="markerLat" :markerLong="markerLong" />
+            <ButtonsComponent :game="game" :markerLat="markerLat" :markerLong="markerLong" @initializeGame="initialize-game" />
           </div>
         </div>
       </div>
@@ -103,7 +104,7 @@ export default {
       {{ error }}
     </div>
   </div>
-  <div v-if="!finished && game">
+  <div v-if="finished && game">
     <h1>Le jeu est fini {{ game.score }}</h1>
   </div>
 </template>

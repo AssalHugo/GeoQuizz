@@ -1,9 +1,9 @@
 <script>
-import { validateAnswer } from '@/services/httpClient';
-
+import { validateAnswer } from '@/services/httpClient'
 
 export default {
   props: ['game', 'markerLat', 'markerLong'],
+  emits: ['initialize-game'],
   data() {
     return {
       score: this.game.score,
@@ -15,14 +15,14 @@ export default {
     validateAnswer() {
       validateAnswer(this.game.id, this.markerLat, this.markerLong)
         .then((response) => {
-          console.log(response);
           this.score = this.score + response.score;
           this.validate = true;
         })
         .catch((error) => {
           console.error(error);
         });
-    },
+        this.$emit('initialize-game');
+      },
   }
 }
 </script>

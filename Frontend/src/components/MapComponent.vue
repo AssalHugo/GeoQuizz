@@ -40,6 +40,7 @@ export default {
         // Add new marker
         marker = L.marker(event.latlng).addTo(map);
         emit('change-marker-coord', event.latlng.lat, event.latlng.lng);
+        console.log(event.latlng);
       });
 
 
