@@ -2,4 +2,6 @@
 app-gateway/vendor/
 app-geoquizz/vendor/
 app-auth/vendor/
+app-consumer/vendor/
+rabbitmq_dir/
 *.ini

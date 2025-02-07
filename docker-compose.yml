@@ -14,8 +14,8 @@ services:
   adminer:
     image: adminer
     ports:
-      - 32501:8080
-      # - 1001:8080
+      # - 32501:8080
+      - 1001:8080
     command: php -S 0.0.0.0:8080 -t /var/www/html
 
   gateway.geoquizz:
@@ -23,8 +23,8 @@ services:
       context: build
       dockerfile: Dockerfile_Gateway
     ports:
-      - 32500:80
-      # - 1000:80
+      # - 32500:80
+      - 1000:80
     volumes:
       - ./Backend/app-gateway:/var/php
       - ./Backend/tokenDirectus.ini:/var/php/../../tokenDirectus.ini
@@ -38,8 +38,8 @@ services:
     env_file:
       - ./geoquizz.env
     ports:
-      - 32502:80
-      # - 1002:80
+      # - 32502:80
+      - 1002:80
     volumes:
       - ./Backend/app-geoquizz:/var/php
       - ./Backend/tokenDirectus.ini:/var/php/../../tokenDirectus.ini
@@ -55,8 +55,8 @@ services:
     env_file:
       - ./geoquizz.env
     ports:
-      - 32503:80
-      # - 1003:80
+      # - 32503:80
+      - 1003:80
     volumes:
       - ./Backend/app-auth:/var/php
     working_dir: /var/php
@@ -77,8 +77,8 @@ services:
   api.directus:
     image: directus/directus:11.1.1
     ports:
-      - 32504:8055
-      # - 1004:8055
+      # - 32504:8055
+      - 1004:8055
     volumes:
       - ./Backend/app-directus/uploads:/directus/uploads
       - ./Backend/app-directus/extensions:/directus/extensions
@@ -89,4 +89,48 @@ services:
         condition: service_healthy
       cache:
         condition: service_healthy
+
+  #######################################
+  ### RabbitMQ Service
+  ###
+  #######################################
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - ./Backend/rabbitmq_dir:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=root
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 8s
+      timeout: 30s
+      retries: 3
+
+  app.consumer:
+    build:
+      context: build
+      dockerfile: Dockerfile_Principal
+    ports:
+      - 1006:80
+    volumes:
+      - ./Backend/app-consumer:/var/php
+    working_dir: /var/php
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: php -S 0.0.0.0:80 -t /var/php/public
+
+  app.mailcatcher:
+    build:
+      context: build
+      dockerfile: Dockerfile_mailCatcher
+    ports:
+      - 1080:1080
+      - 1025:1025
+    depends_on:
+      - app.consumer
     
