@@ -17,16 +17,6 @@ return
             return parse_ini_file(__DIR__ . '/mailer.ini', true)['mailer'];
         },
 
-        'rabbitmq.connection.rdv' => function (ContainerInterface $c) {
-            $connection = new AMQPStreamConnection(
-                $c->get('settings')['rabbitmq.host'],
-                $c->get('settings')['rabbitmq.port'],
-                $c->get('settings')['rabbitmq.user'],
-                $c->get('settings')['rabbitmq.password']
-            );
-            return $connection;
-        },
-
         ServiceMailInterface::class => function (ContainerInterface $c) {
             $config = $c->get('mailer.config');
             $transport = Transport::fromDsn($config['dsn']);

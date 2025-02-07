@@ -8,7 +8,7 @@ use app_consumer\core\services\mails\ServiceMailInterface;
 $container = require __DIR__ . '/../../../config/bootstrap.php';
 $serviceMail = $container->get(ServiceMailInterface::class);
 
-$connection = new AMQPStreamConnection('localhost', 5672, 'admin', 'root');
+$connection = new AMQPStreamConnection('rabbitmq', 5672, 'admin', 'root');
 $channel = $connection->channel();
 
 echo ' [*] Waiting for messages. To exit press CTRL+C', "\n";
@@ -18,11 +18,13 @@ $callback = function ($msg) use ($serviceMail) {
     echo " [x] Received ", $msg->getBody(), "\n";
 
     try {
-        if ($messageData['message'] === "CREATE") {
-            $serviceMail->notifyRdvCreated($messageData);
-        } elseif ($messageData['message'] === "CANCEL") {
-            $serviceMail->notifyRdvCanceled($messageData);
-        }
+
+        $serviceMail->notifyCreateGame(
+            $messageData['user']['email'],
+            $messageData
+        );
+
+        print_r($messageData);
 
         echo " [x] Email sent for message type {$messageData['message']}\n";
     } catch (\Exception $e) {
@@ -30,7 +32,7 @@ $callback = function ($msg) use ($serviceMail) {
     }
 };
 
-$channel->basic_consume('rdv.queue', '', false, true, false, false, $callback);
+$channel->basic_consume('game.queue', '', false, true, false, false, $callback);
 
 try {
     $channel->consume();
