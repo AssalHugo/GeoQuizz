@@ -7,7 +7,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use app_auth\application\actions\AbstractAction;
 use app_auth\application\renderer\JsonRenderer;
-use app_auth\core\services\exceptions\ServiceAuthInvalidDataException;
+use app_auth\core\services\auth\ServiceAuthInvalidDataException;
 
 class ValidateTokenAction extends AbstractAction
 {
@@ -40,27 +40,41 @@ class ValidateTokenAction extends AbstractAction
         try {
             $authDTO = $this->authProvider->getSignedInUser($token);
         } catch (ServiceAuthInvalidDataException $e) {
-            $data = [
-                'message' => $e->getMessage(),
-                'exception' => [
+            // Erreur d'authentification (token invalide, expiré...)
+            return JsonRenderer::render($rs, 401, [
+                'message' => 'Token invalide: ' . $e->getMessage(),
+                'error' => [
                     'type' => get_class($e),
-                    'code' => $e->getCode(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine()
+                    'code' => 401
                 ]
-            ];
-            return JsonRenderer::render($rs, 401, $data);
+            ]);
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            // Token expiré
+            return JsonRenderer::render($rs, 401, [
+                'message' => 'Token expiré',
+                'error' => [
+                    'type' => get_class($e),
+                    'code' => 401,
+                ]
+            ]);
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            // Signature invalide
+            return JsonRenderer::render($rs, 401, [
+                'message' => 'Signature du token invalide',
+                'error' => [
+                    'type' => get_class($e),
+                    'code' => 401
+                ]
+            ]);
         } catch (\Exception $e) {
-            $data = [
-                'message' => $e->getMessage(),
-                'exception' => [
+            // Autres erreurs inattendues
+            return JsonRenderer::render($rs, 500, [
+                'message' => 'Erreur interne du serveur: ' . $e->getMessage(),
+                'error' => [
                     'type' => get_class($e),
-                    'code' => $e->getCode(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine()
+                    'code' => 500
                 ]
-            ];
-            return JsonRenderer::render($rs, 500, $data);
+            ]);
         }
 
         $data = [
