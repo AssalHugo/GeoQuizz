@@ -21,7 +21,9 @@ class Cors implements MiddlewareInterface
             ->withHeader('Access-Control-Max-Age', 3600)
             ->withHeader('Access-Control-Allow-Credentials', 'true')
             ->withHeader('Content-Language', 'fr-FR')
-            ->withHeader('Cache-Control', 'max-age=' . 60 * 60 * 2);
+            ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
+            ->withHeader('Pragma', 'no-cache')
+            ->withHeader('Expires', '0');
 
         return $response;
     }

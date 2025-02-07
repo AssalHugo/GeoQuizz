@@ -20,8 +20,7 @@ class GameService implements GameServiceInterface
     public function __construct(
         GameRepositoryInterface $gameRepository,
         SerieDirectusInterface  $serieService
-    )
-    {
+    ) {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
     }
@@ -29,7 +28,7 @@ class GameService implements GameServiceInterface
     public function getGames(): array
     {
         $games = $this->gameRepository->findAll();
-        return array_map(fn($games)=>$games->toDTO(), $games);
+        return array_map(fn($games) => $games->toDTO(), $games);
     }
 
     public function getGameById(string $gameId): ?GameDTO
@@ -76,7 +75,7 @@ class GameService implements GameServiceInterface
     public function calculateScore(GameDTO $game, float $distance, float $responseTime): int
     {
         $points = 0;
-    
+
         // Gérer les petites distances en attribuant un score plus élevé
         if ($distance < 0.01) {  // Moins de 10 mètres
             $points = 10;
@@ -89,30 +88,29 @@ class GameService implements GameServiceInterface
         } else {
             $points = 2;
         }
-    
+
         // Ajuster les points en fonction du temps de réponse
         $multiplier = 1;
         if ($responseTime < 5) {
             $multiplier = 4;
         } elseif ($responseTime < 10) {
             $multiplier = 2;
-        } 
-    var_dump($responseTime);
+        }
         // Calculer le score final
         $finalScore = $points * $multiplier;
-    
+
         return $finalScore;
     }
-    
+
     public function giveAnswer(GameDTO $game, float $latitude, float $longitude): int
     {
         $currentPhoto = $this->getCurrentPhoto($game);
         if (!$currentPhoto) {
             throw new \Exception("Aucune photo actuelle trouvée.");
         }
-    
+
         $serie = $this->serieService->getSerieById($game->serieId);
-        $largeur = $serie->largeur; 
+        $largeur = $serie->largeur;
         $distance = $this->calculateDistance(
             $latitude,
             $longitude,
@@ -120,21 +118,21 @@ class GameService implements GameServiceInterface
             $currentPhoto->getLongitude(),
             $largeur
         );
-    
+
         $startTime = $game->startTime ?? new \DateTimeImmutable();
         $game->startTime = $startTime;
-    
+
         $responseTime = time() - $startTime->getTimestamp();
         $score = $this->calculateScore($game, $distance, $responseTime);
-    
+
         $game->score += $score;
-    
-        
+
+
         $this->gameRepository->save($game->toEntity());
-        
+
         return $score;
     }
-    
+
     public function getNextPhoto(GameDTO $game): ?Photo
     {
         // Vérifier si la partie est terminée
@@ -244,25 +242,12 @@ class GameService implements GameServiceInterface
         // Calculer la différence entre les latitudes et longitudes
         $latDiff = abs($lat2 - $lat1);
         $lonDiff = abs($lon2 - $lon1);
-    
-        // Afficher les différences de latitude et de longitude
-        var_dump("Latitude Difference: ", $latDiff);
-        var_dump("Longitude Difference: ", $lonDiff);
-    
+
         // Calculer la distance approximative
         $distance = ($latDiff + $lonDiff) * 111;  // 1 degré de latitude ≈ 111 km
-    
+
         // Ajuster la distance en fonction de la largeur
         $adjustedDistance = $distance * (1 + $largeur / 1000); // Ajuste la distance en fonction de la largeur
-    
-        // Affichage de la distance ajustée
-        var_dump("Adjusted Distance: ", $adjustedDistance);
-    
         return $adjustedDistance;
     }
-    
-        
-    
-    
-    
 }
