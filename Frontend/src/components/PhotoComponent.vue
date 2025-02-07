@@ -2,9 +2,8 @@
 export default {
   props: ['current-photo'],
   methods: {
-    getImageUrl(name) {
-      console.log(new URL(`../assets/images/nancy/${name}`, import.meta.url))
-      return new URL(`../assets/images/nancy/${name}`, import.meta.url).href
+    getImageUrl(url) {
+      return new URL(`../assets/images/${url}`, import.meta.url).href
     },
   },
 }

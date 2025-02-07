@@ -31,8 +31,6 @@ export default {
     changeMarkerCoord(lat, long) {
       this.markerLat = lat
       this.markerLong = long
-      console.log(this.markerLat, this.markerLong)
-      console.log(this.currentPhoto)
     },
     changeValidate() {
       this.validate = !this.validate
@@ -62,11 +60,9 @@ export default {
               this.$refs.mapRef.setupMap();
             }
           })
-          console.log(this.game)
 
         } else if (this.game.state === "FINISHED") {
           this.finished = true
-          console.log('Game is finished')
         }
       } catch (error) {
         console.error('Error:', error)

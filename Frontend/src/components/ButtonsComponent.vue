@@ -16,9 +16,7 @@ export default {
       validateAnswer(this.game.id, this.markerLat, this.markerLong)
         .then((response) => {
           this.score = response.score - this.scoreAvant;
-          console.log(this.score);
           this.scoreAvant = response.score;
-          console.log (this.scoreAvant);
           this.$emit('change-validate');
         })
         .catch((error) => {
