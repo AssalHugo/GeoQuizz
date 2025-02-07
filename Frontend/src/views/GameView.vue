@@ -126,7 +126,7 @@ export default {
             {{ validate ? currentPhoto.adresse : 'Placez votre marqueur' }}
           </div>
           <div class="w-[320px] h-[240px] sm:w-[400px] sm:h-[300px]">
-            <MapComponent ref="mapRef" :serie="serie" :validate="validate" @change-marker-coord="changeMarkerCoord" />
+            <MapComponent ref="mapRef" :serie="serie" :validate="validate" :current-photo="currentPhoto" @change-marker-coord="changeMarkerCoord" />
           </div>
         </div>
       </div>
