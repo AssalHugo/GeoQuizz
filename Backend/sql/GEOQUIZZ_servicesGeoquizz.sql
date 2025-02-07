@@ -24,6 +24,11 @@ CREATE TABLE "public"."user" (
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
 
+INSERT INTO "user" ("id", "nickname", "email") VALUES 
+  ('d9247dde-aab2-4790-9ddf-53c3107c7f62','Anne','anne.willow@outlook.com'),
+  ('e1d95011-32b0-469a-b0ff-09ec21e9f598','Mariko','mariko@gmail.com'),
+  ('c0ab4fc4-7829-4e96-8515-9f35a7b1c704','Tate','tate@gmail.com');
+
 ALTER TABLE ONLY "public"."game" ADD CONSTRAINT "game_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"(id) ON DELETE CASCADE NOT DEFERRABLE;
 
 -- 2025-02-07 10:07:03.324417+00
