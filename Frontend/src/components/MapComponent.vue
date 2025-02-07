@@ -26,6 +26,7 @@ export default {
       }).addTo(map);
 
       map.on('click', (event) => {
+        console.log(map.getZoom())
         if (marker) {
           map.removeLayer(marker);
         }
