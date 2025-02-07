@@ -21,6 +21,8 @@ interface GameServiceInterface {
     public function getGameById(string $gameId): ?GameDTO;
     public function getGames(): array;
     public function getGameState(GameDTO $game): string;
+    public function getHighestScoreBySerieForUser(string $serieId, string $userId): int;
+    public function getGamesByUser(string $userId): array;
 
 
 }

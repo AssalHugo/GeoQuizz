@@ -18,7 +18,8 @@ use gateway_geo\application\actions\GatewayGetNextPhotoAction;
 use gateway_geo\application\actions\GatewayGetGameScoreAction;
 use gateway_geo\application\actions\GatewayGetGameStateAction;
 use gateway_geo\application\actions\GatewaySignInAction;
-use gateway_geo\application\actions\GetHighestScoreBySerieForUserAction;
+use gateway_geo\application\actions\GatewayGetHighestScoreBySerieForUserAction;
+use gateway_geo\application\middlewares\GatewayAuthnMiddleware;
 use Psr\Container\ContainerInterface;
 
 $settings = require __DIR__ . '/settings.php';
@@ -115,7 +116,11 @@ return
             return new GatewaySignInAction($c->get('guzzle.client.auth'));
         },
 
-        GetHighestScoreBySerieForUserAction::class => function (ContainerInterface $c) {
-            return new GetHighestScoreBySerieForUserAction($c->get('guzzle.client.geoquizz'));
+        GatewayGetHighestScoreBySerieForUserAction::class => function (ContainerInterface $c) {
+            return new GatewayGetHighestScoreBySerieForUserAction($c->get('guzzle.client.geoquizz'));
+        },
+
+        GatewayAuthnMiddleware::class => function (ContainerInterface $c) {
+            return new GatewayAuthnMiddleware($c->get('guzzle.client.auth'));
         },
     ];

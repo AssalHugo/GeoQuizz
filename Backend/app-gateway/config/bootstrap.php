@@ -2,6 +2,7 @@
 
 use DI\ContainerBuilder;
 use gateway_geo\application\middlewares\Cors;
+use gateway_geo\application\middlewares\GatewayAuthnMiddleware;
 use Slim\Factory\AppFactory;
 
 $builder = new ContainerBuilder();
@@ -12,7 +13,7 @@ $c = $builder->build();
 $app = AppFactory::createFromContainer($c);
 
 $app->add(new Cors());
-// $app->add(GatewayAuthMiddleware::class);
+$app->add(GatewayAuthnMiddleware::class);
 
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();

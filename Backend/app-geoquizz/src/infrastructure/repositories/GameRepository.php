@@ -113,4 +113,25 @@ class GameRepository implements GameRepositoryInterface
             throw new RepositoryException("Erreur lors de la récupération des jeux.", 500, $e);
         }
     }
+
+    public function getGamesByUser(string $userId): array
+    {
+        try {
+            $query = $this->entityManager->createQueryBuilder()
+                ->select('g')
+                ->from(Game::class, 'g')
+                ->Where('g.userId = :userId')
+                ->setParameter('userId', $userId)
+                ->getQuery();
+
+
+            return $query->getResult();
+        } catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
+            throw new RepositoryConnectionException("Erreur de connexion à la base de données", 503, $e);
+        } catch (\Doctrine\ORM\Exception\ORMException $e) {
+            throw new RepositoryException("Erreur lors de la récupération des jeux", 500, $e);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
