@@ -14,17 +14,17 @@ services:
   adminer:
     image: adminer
     ports:
-      # - 32501:8080
-      - 1001:8080
-    # command: php -S 0.0.0.0:8080 -t /var/www/html
+      - 32501:8080
+      # - 1001:8080
+    command: php -S 0.0.0.0:8080 -t /var/www/html
 
   gateway.geoquizz:
     build:
       context: build
       dockerfile: Dockerfile_Gateway
     ports:
-      # - 32500:80
-      - 1000:80
+      - 32500:80
+      # - 1000:80
     volumes:
       - ./Backend/app-gateway:/var/php
       - ./Backend/tokenDirectus.ini:/var/php/../../tokenDirectus.ini
@@ -38,8 +38,8 @@ services:
     env_file:
       - ./geoquizz.env
     ports:
-      # - 32502:80
-      - 1002:80
+      - 32502:80
+      # - 1002:80
     volumes:
       - ./Backend/app-geoquizz:/var/php
       - ./Backend/tokenDirectus.ini:/var/php/../../tokenDirectus.ini
@@ -55,8 +55,8 @@ services:
     env_file:
       - ./geoquizz.env
     ports:
-      # - 32503:80
-      - 1003:80
+      - 32503:80
+      # - 1003:80
     volumes:
       - ./Backend/app-auth:/var/php
     working_dir: /var/php
@@ -77,8 +77,8 @@ services:
   api.directus:
     image: directus/directus:11.1.1
     ports:
-      # - 32504:8055
-      - 1004:8055
+      - 32504:8055
+      # - 1004:8055
     volumes:
       - ./Backend/app-directus/uploads:/directus/uploads
       - ./Backend/app-directus/extensions:/directus/extensions
