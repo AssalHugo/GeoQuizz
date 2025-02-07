@@ -29,28 +29,23 @@ class GetNextPhotoAction extends AbstractAction
             ];
             return JsonRenderer::render($rs, 400, $data);
         }
-
+    
         try {
             // Récupérer le jeu via son ID
             $game = $this->gameService->getGameById($args['id']);
             
             // Récupérer la prochaine photo du jeu
             $photo = $this->gameService->getNextPhoto($game);
-
-            // Si aucune photo suivante n'est trouvée
+    
+            // Si aucune photo suivante n'est trouvée, le jeu est terminé
             if (!$photo) {
                 $data = [
-                    'message' => 'Aucune photo suivante trouvée pour ce jeu.',
-                    'exception' => [
-                        'type' => 'NotFoundException',
-                        'code' => 404,
-                        'file' => __FILE__,
-                        'line' => __LINE__
-                    ]
+                    'message' => 'Le jeu est terminé.',
+                    'status' => 'FINISHED'
                 ];
-                return JsonRenderer::render($rs, 404, $data);
+                return JsonRenderer::render($rs, 200, $data); // On retourne 200 OK au lieu de 404
             }
-
+    
             // Retourner la prochaine photo
             $data = [
                 'id' => $photo->getId(),
@@ -63,11 +58,11 @@ class GetNextPhotoAction extends AbstractAction
                     'self' => ['href' => '/games/' . $args['id'] . '/next-photo']
                 ]
             ];
-
+    
             return JsonRenderer::render($rs, 200, $data);
-
+    
         } catch (\Exception $e) {
-            // Erreur si le jeu n'est pas trouvé
+            // Gestion des erreurs si le jeu n'est pas trouvé ou autre problème
             $data = [
                 'message' => $e->getMessage(),
                 'exception' => [
@@ -79,5 +74,5 @@ class GetNextPhotoAction extends AbstractAction
             ];
             return JsonRenderer::render($rs, 404, $data);
         }
-    }
+    }    
 }

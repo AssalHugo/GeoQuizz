@@ -10,6 +10,8 @@ use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
 use Ramsey\Uuid\Uuid;
 
+use function PHPUnit\Framework\throwException;
+
 class GameService implements GameServiceInterface
 {
     private GameRepositoryInterface $gameRepository;
@@ -56,7 +58,11 @@ class GameService implements GameServiceInterface
 
     public function isFinished(GameDTO $game): bool
     {
-        return $game->currentPhotoIndex >= count($game->photoIds);
+        $finished = false;
+        if($game->currentPhotoIndex=10){
+            $finished = true;
+        }
+        return $finished;
     }
 
     public function startGame(GameDTO $game): void
@@ -131,17 +137,21 @@ class GameService implements GameServiceInterface
     {
         // Vérifier si la partie est terminée
         if ($this->isFinished($game)) {
-            throw new \Exception("Le jeu est terminé.");
+            return null;
+        } elseif($game->gameRepository = 10) {
+            $this->endGame(game: $game);
+
+        } elseif($game->gameRepository = 10){
+            // Passer à la photo suivante
+            $game->currentPhotoIndex++;
+
+            // Sauvegarder en base
+            $this->gameRepository->save($game->toEntity());
+
+            // Retourner la nouvelle photo
+            return $this->getCurrentPhoto($game);
         }
 
-        // Passer à la photo suivante
-        $game->currentPhotoIndex++;
-
-        // Sauvegarder en base
-        $this->gameRepository->save($game->toEntity());
-
-        // Retourner la nouvelle photo
-        return $this->getCurrentPhoto($game);
     }
 
 
