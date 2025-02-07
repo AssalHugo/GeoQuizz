@@ -34,6 +34,7 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
   } catch (error) {
     if (!isRefreshing) {
       isRefreshing = true
+      console.log(error)
       try {
         const data = await refreshToken()
         const userStore = useUserStore()
