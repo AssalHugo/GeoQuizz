@@ -1,5 +1,5 @@
 <script>
-import { validateAnswer } from '@/services/httpClient'
+import { validateAnswer, nextPhoto } from '@/services/httpClient'
 
 export default {
   props: ['game', 'markerLat', 'markerLong'],
@@ -15,14 +15,24 @@ export default {
     validateAnswer() {
       validateAnswer(this.game.id, this.markerLat, this.markerLong)
         .then((response) => {
-          this.score = this.score + response.score;
+          console.log(response);
+          this.score = response.score;
           this.validate = true;
         })
         .catch((error) => {
           console.error(error);
         });
-        this.$emit('initialize-game');
       },
+    nextPhoto() {
+      nextPhoto(this.game.id)
+        .then(() => {
+          this.validate = false;
+          this.$emit('initialize-game');
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }
 }
 </script>
@@ -36,11 +46,17 @@ export default {
     </div>
 
     <!-- Validate button -->
-    <button
+    <button v-if="!validate"
       @click="validateAnswer"
       class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
     >
       Valider
     </button>
+    <button v-if="validate"
+      @click="nextPhoto"
+      class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+    >
+    Photo Suivante
+  </button>
   </div>
 </template>

@@ -9,6 +9,9 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
   const token = useUserStore().token
   const headers = {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    Pragma: 'no-cache',
+    Expires: '0',
     ...(!isAuthRequest &&
       token && {
         Authorization: `Bearer ${token}`,
@@ -17,6 +20,7 @@ const request = async (endpoint, method = 'GET', body = null, isAuthRequest = fa
   const config = {
     method,
     headers,
+    credentials: 'include',
     ...(body && { body: JSON.stringify(body) }),
   }
   try {
@@ -101,7 +105,12 @@ export function getSerieById(serieId) {
 }
 
 export function validateAnswer(gameId, lat, long) {
+  console.log('lat', lat)
   return request(`/games/${gameId}/answer`, 'POST', { latitude: lat, longitude: long })
+}
+
+export function nextPhoto(gameId) {
+  return request(`/games/${gameId}/next-photo`)
 }
 
 export function validateToken() {

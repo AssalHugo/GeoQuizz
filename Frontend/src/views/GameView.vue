@@ -20,6 +20,7 @@ export default {
       finished: false,
       markerLat: 0,
       markerLong: 0,
+      mapRef: null,
     }
   },
   methods: {
@@ -30,27 +31,40 @@ export default {
     async initializeGame() {
       try {
         this.loading = true
-        const [game] = await Promise.all([
-          getGameById(this.$route.params.id),
-        ])
-        this.game = game.game
-        console.log(this.game)
-        if (this.game.state == "IN_PROGRESS") {
-          this.serie = await getSerieById(this.game.serieId)
-          this.currentPhoto = await getCurrentPhoto(this.$route.params.id)
-        } else if ( this.game.state == "FINISHED") {
+        // Récupérer le jeu
+        const gameResponse = await getGameById(this.$route.params.id)
+        this.game = gameResponse.game
+
+        if (this.game.state === "IN_PROGRESS") {
+          // Attendre que les deux requêtes soient terminées
+          const [serieResponse, photoResponse] = await Promise.all([
+            getSerieById(this.game.serieId),
+            getCurrentPhoto(this.$route.params.id)
+          ])
+
+          this.serie = serieResponse
+          this.currentPhoto = photoResponse
+
+          this.$nextTick(() => {
+            if (this.$refs.mapRef) {
+              this.$refs.mapRef.setupMap();
+            }
+          })
+
+        } else if (this.game.state === "FINISHED") {
           this.finished = true
         }
       } catch (error) {
+        console.error('Error:', error)
         this.error = error.message
       } finally {
         this.loading = false
       }
     }
   },
-  async mounted() {
+  mounted() {
     this.initializeGame();
-  }
+  },
 }
 </script>
 
@@ -70,7 +84,7 @@ export default {
             <h1 class="text-2xl font-bold text-white">{{ serie.data.titre }}</h1>
           </div>
           <div v-if="game" class="bg-black/60 backdrop-blur-sm rounded-lg">
-            <ButtonsComponent :game="game" :markerLat="markerLat" :markerLong="markerLong" @initializeGame="initialize-game" />
+            <ButtonsComponent :game="game" :markerLat="markerLat" :markerLong="markerLong" @initialize-game="initializeGame" />
           </div>
         </div>
       </div>
@@ -83,7 +97,7 @@ export default {
         <div class="bg-white/90 backdrop-blur rounded-xl shadow-xl">
           <div class="bg-gray-800 px-3 py-1.5 text-sm text-gray-200">Placez votre marqueur</div>
           <div class="w-96 h-64">
-            <MapComponent :serie="serie" @change-marker-coord="changeMarkerCoord" />
+            <MapComponent ref="mapRef" :serie="serie" @change-marker-coord="changeMarkerCoord" />
           </div>
         </div>
       </div>
