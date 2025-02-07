@@ -40,7 +40,7 @@ return function (App $app): App {
     $app->post('/users', CreateUserAction::class);
     $app->get('/users/{id}', GetUserByIdAction::class);
     $app->get('/users', GetUserByEmailAction::class);
-    $app->get('/users/{userId}/series/{serieId}/highest-score', GetHighestScoreBySerieForUserAction::class);
+    $app->get('/users/{userId}/highest-score', GetHighestScoreBySerieForUserAction::class);
     $app->get('/users/{userId}/games', GetGamesByUserAction::class);
 
     return $app;

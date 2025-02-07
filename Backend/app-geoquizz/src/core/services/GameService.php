@@ -57,7 +57,7 @@ class GameService implements GameServiceInterface
 
     public function isFinished(GameDTO $game): bool
     {
-        return $game->currentPhotoIndex >= count($game->photoIds);
+        return $game->currentPhotoIndex = count($game->photoIds);
     }
 
     public function startGame(GameDTO $game): void
@@ -203,7 +203,7 @@ class GameService implements GameServiceInterface
         return $photo;
     }
 
-    public function getHighestScoreBySerieForUser(string $serieId, string $userId): int
+    public function getHighestScoreBySerieForUser(?string $serieId, string $userId): int|array
     {
         return $this->gameRepository->getHighestScoreBySerieForUser($serieId, $userId);
     }

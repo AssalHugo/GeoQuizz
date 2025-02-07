@@ -78,19 +78,35 @@ class GameRepository implements GameRepositoryInterface
         return $game;
     }
 
-    public function getHighestScoreBySerieForUser(string $serieId, string $userId): int
+    public function getHighestScoreBySerieForUser(?string $serieId, string $userId): int|array
     {
         try {
-            $query = $this->entityManager->createQueryBuilder()
-                ->select('MAX(g.score)')
-                ->from(Game::class, 'g')
-                ->Where('g.serieId = :serieId')
-                ->andWhere('g.userId = :userId')
-                ->setParameter('userId', $userId)
-                ->setParameter('serieId', $serieId)
-                ->getQuery();
 
-            return (int)$query->getSingleScalarResult();
+            if ($serieId === null) {
+                //Pour chaque série on récupère le score le plus élevé
+                $query = $this->entityManager->createQueryBuilder()
+                    ->select('g.serieId, MAX(g.score) as max_score')
+                    ->from(Game::class, 'g')
+                    ->where('g.userId = :userId')
+                    ->setParameter('userId', $userId)
+                    ->groupBy('g.serieId')
+                    ->getQuery();
+
+
+                return $query->getResult();
+            } else {
+                $query = $this->entityManager->createQueryBuilder()
+                    ->select('MAX(g.score)')
+                    ->from(Game::class, 'g')
+                    ->Where('g.serieId = :serieId')
+                    ->andWhere('g.userId = :userId')
+                    ->setParameter('userId', $userId)
+                    ->setParameter('serieId', $serieId)
+                    ->getQuery();
+
+                return (int) $query->getSingleScalarResult();
+            }
+
         } catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
             throw new RepositoryConnectionException("Erreur de connexion à la base de données", 503, $e);
         } catch (\Doctrine\ORM\Exception\ORMException $e) {
