@@ -3,12 +3,14 @@ import { getGameById, getCurrentPhoto, getSerieById } from '@/services/httpClien
 import MapComponent from '@/components/MapComponent.vue'
 import PhotoComponent from '@/components/PhotoComponent.vue'
 import ButtonsComponent from '@/components/ButtonsComponent.vue'
+import FinalResultComponent from '@/components/FinalResultComponent.vue'
 
 export default {
   components: {
     MapComponent,
     PhotoComponent,
     ButtonsComponent,
+    FinalResultComponent
   },
   data() {
     return {
@@ -146,6 +148,6 @@ export default {
     </div>
   </div>
   <div v-if="finished && game">
-    <h1>Le jeu est fini {{ game.score }}</h1>
+    <FinalResultComponent :score="game.score" />
   </div>
 </template>

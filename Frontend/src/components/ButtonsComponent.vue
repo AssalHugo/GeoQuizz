@@ -55,14 +55,14 @@ export default {
     >
       Valider
     </button>
-    <button v-if="validate && game.currentPhotoIndex < game.photoIds.length"
+    <button v-if="validate && game.currentPhotoIndex < game.photoIds.length - 1"
       @click="nextPhoto"
       class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
     >
     Photo Suivante
   </button>
-  <button v-if="game.currentPhotoIndex >= game.photoIds.length"
-      @click="showResult"
+  <button v-if="validate && game.currentPhotoIndex >= game.photoIds.length - 1"
+      @click="nextPhoto"
       class="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
     >
     Voir le résultat
