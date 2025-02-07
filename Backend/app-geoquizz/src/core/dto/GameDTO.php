@@ -13,7 +13,6 @@ class GameDTO extends DTO
     protected string $state;
     protected int $currentPhotoIndex;
     protected ?\DateTimeImmutable $startTime;
-    protected ?string $token;
 
     public function __construct(Game $game)
     {

@@ -21,8 +21,6 @@ use api_geoquizz\core\services\GameService;
 use api_geoquizz\core\services\GameServiceInterface;
 use api_geoquizz\infrastructure\repositories\GameRepository;
 use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
-use api_geoquizz\application\providers\game\GameJWTProvider;
-
 
 $settings = require __DIR__ . '/settings.php';
 
@@ -34,14 +32,6 @@ return [
         return new \GuzzleHttp\Client([
             'base_uri' => $container->get('settings')['directus.api']
         ]);
-    },
-
-    'GameJWTProvider' => function (ContainerInterface $container) {
-        return new GameJWTProvider(
-            $container->get('settings')['jwt_secret'],  // Injecte la clé secrète depuis les paramètres
-            'HS256',  // L'algorithme par défaut, tu peux aussi le personnaliser si nécessaire
-            3600      // L'expiration par défaut du token (1 heure)
-        );
     },
 
     EntityManager::class => function (ContainerInterface $container) {
@@ -77,16 +67,12 @@ return [
         return new GameRepository($container->get(EntityManager::class));
     },
     GameServiceInterface::class => function (ContainerInterface $container) {
-        return new GameService(
-            $container->get(GameRepositoryInterface::class),
-            $container->get(SerieDirectusInterface::class), 
-            $container->get(GameJWTProvider::class) );
+        return new GameService($container->get(GameRepositoryInterface::class), $container->get(SerieDirectusInterface::class) );
     },
     GameService::class => function (ContainerInterface $container) {
         return new GameService(
             $container->get(GameRepositoryInterface::class),
-            $container->get(SerieDirectusInterface::class),
-            $container->get(GameJWTProvider::class)
+            $container->get(SerieDirectusInterface::class)
         );
     },
     CreateGameAction::class => function (ContainerInterface $container) {
