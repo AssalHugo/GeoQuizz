@@ -1,18 +1,29 @@
-CREATE TABLE "game" (
-    "id" VARCHAR(48) PRIMARY KEY,
-    "userId" UUID NOT NULL,
-    "photoIds" JSONB NOT NULL,
-    "serieId" VARCHAR(48) NOT NULL,
-    "score" INT DEFAULT 0 NOT NULL,
-    "state" VARCHAR(20) NOT NULL,
-    "currentPhotoIndex" INT DEFAULT 0 NOT NULL,
-    "startTime" TIMESTAMP DEFAULT NULL
-);
+-- Adminer 4.8.1 PostgreSQL 17.2 (Debian 17.2-1.pgdg120+1) dump
 
-CREATE TABLE "user" (
-  "id" UUID PRIMARY KEY,
-  "nickname" varchar,
-  "email" varchar
-);
+DROP TABLE IF EXISTS "game";
 
-ALTER TABLE "game" ADD FOREIGN KEY ("userId") REFERENCES "user" ("id");
+CREATE TABLE "public"."game" (
+    "id" character varying(48) NOT NULL,
+    "userId" uuid NOT NULL,
+    "photoIds" jsonb NOT NULL,
+    "serieId" character varying(48) NOT NULL,
+    "score" integer DEFAULT '0' NOT NULL,
+    "state" character varying(20) NOT NULL,
+    "currentPhotoIndex" integer DEFAULT '0' NOT NULL,
+    "startTime" timestamp,
+    CONSTRAINT "game_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+DROP TABLE IF EXISTS "user";
+
+CREATE TABLE "public"."user" (
+    "id" uuid NOT NULL,
+    "nickname" character varying,
+    "email" character varying NOT NULL,
+    CONSTRAINT "user_email" UNIQUE ("email"),
+    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+) WITH (oids = false);
+
+ALTER TABLE ONLY "public"."game" ADD CONSTRAINT "game_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"(id) ON DELETE CASCADE NOT DEFERRABLE;
+
+-- 2025-02-07 10:07:03.324417+00
