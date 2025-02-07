@@ -21,7 +21,8 @@ class ValidateTokenAction extends AbstractAction
 
     public function __invoke(RequestInterface $rq, ResponseInterface $rs, array $args): ResponseInterface
     {
-        $token = substr($rq->getHeader('Authorization')[0], 7);
+        $authorizationHeader = $rq->getHeader('Authorization');
+        $token = isset($authorizationHeader[0]) ? substr($authorizationHeader[0], 7) : null;
 
         if (!$token) {
             $data = [

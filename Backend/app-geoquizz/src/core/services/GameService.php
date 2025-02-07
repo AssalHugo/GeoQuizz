@@ -17,10 +17,17 @@ class GameService implements GameServiceInterface
 
     public function __construct(
         GameRepositoryInterface $gameRepository,
-        SerieDirectusInterface $serieService
-    ) {
+        SerieDirectusInterface  $serieService
+    )
+    {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
+    }
+
+    public function getGames(): array
+    {
+        $games = $this->gameRepository->findAll();
+        return array_map(fn($games)=>$games->toDTO(), $games);
     }
 
     public function getGameById(string $gameId): ?GameDTO
@@ -55,7 +62,7 @@ class GameService implements GameServiceInterface
 
     public function startGame(GameDTO $game): void
     {
-        $game->state ='IN_PROGRESS';
+        $game->state = 'IN_PROGRESS';
         $game->startTime = (new \DateTimeImmutable());
         $this->gameRepository->save($game->toEntity());
     }
@@ -63,54 +70,86 @@ class GameService implements GameServiceInterface
     public function calculateScore(GameDTO $game, float $distance, float $responseTime): int
     {
         $points = 0;
-        if ($distance < 100) $points = 5;
-        elseif ($distance < 200) $points = 3;
-        elseif ($distance < 300) $points = 1;
-
-        $multiplier = 1;
-        if ($responseTime < 5) $multiplier = 4;
-        elseif ($responseTime < 10) $multiplier = 2;
-        elseif ($responseTime > 20) $multiplier = 0;
-
-        return $points * $multiplier;
-    }
-
-    public function updateGameProgress(GameDTO $game, float $latitude, float $longitude): int
-{
-    $currentPhoto = $this->getCurrentPhoto($game);
-    if (!$currentPhoto) {
-        throw new \Exception("Aucune photo actuelle trouvée.");
-    }
-
-    $distance = $this->calculateDistance(
-        $latitude,
-        $longitude,
-        $currentPhoto->getLatitude(),
-        $currentPhoto->getLongitude()
-    );
-
-    $startTime = $game->startTime ?? new \DateTimeImmutable();
-    $game->startTime = $startTime;
-
-    $responseTime = time() - $startTime->getTimestamp();
-    $score = $this->calculateScore($game, $distance, $responseTime);
-
-    $game->score += $score;
-    $game->currentPhotoIndex++;
-
-    if ($this->isFinished($game)) {
-        $this->endGame($game);
-    }
-
-    $this->gameRepository->save($game->toEntity());
-    return $score;
-}
-
     
+        // Gérer les petites distances en attribuant un score plus élevé
+        if ($distance < 0.01) {  // Moins de 10 mètres
+            $points = 10;
+        } elseif ($distance < 0.05) {  // Moins de 50 mètres
+            $points = 8;
+        } elseif ($distance < 0.1) {  // Moins de 100 mètres
+            $points = 6;
+        } elseif ($distance < 0.2) {  // Moins de 200 mètres
+            $points = 4;
+        } else {
+            $points = 2;
+        }
+    
+        // Ajuster les points en fonction du temps de réponse
+        $multiplier = 1;
+        if ($responseTime < 5) {
+            $multiplier = 4;
+        } elseif ($responseTime < 10) {
+            $multiplier = 2;
+        } 
+    var_dump($responseTime);
+        // Calculer le score final
+        $finalScore = $points * $multiplier;
+    
+        return $finalScore;
+    }
+    
+    public function giveAnswer(GameDTO $game, float $latitude, float $longitude): int
+    {
+        $currentPhoto = $this->getCurrentPhoto($game);
+        if (!$currentPhoto) {
+            throw new \Exception("Aucune photo actuelle trouvée.");
+        }
+    
+        $serie = $this->serieService->getSerieById($game->serieId);
+        $largeur = $serie->largeur; 
+        $distance = $this->calculateDistance(
+            $latitude,
+            $longitude,
+            $currentPhoto->getLatitude(),
+            $currentPhoto->getLongitude(),
+            $largeur
+        );
+    
+        $startTime = $game->startTime ?? new \DateTimeImmutable();
+        $game->startTime = $startTime;
+    
+        $responseTime = time() - $startTime->getTimestamp();
+        $score = $this->calculateScore($game, $distance, $responseTime);
+    
+        $game->score += $score;
+    
+        
+        $this->gameRepository->save($game->toEntity());
+        
+        return $score;
+    }
+    
+    public function getNextPhoto(GameDTO $game): ?Photo
+    {
+        // Vérifier si la partie est terminée
+        if ($this->isFinished($game)) {
+            throw new \Exception("Le jeu est terminé.");
+        }
+
+        // Passer à la photo suivante
+        $game->currentPhotoIndex++;
+
+        // Sauvegarder en base
+        $this->gameRepository->save($game->toEntity());
+
+        // Retourner la nouvelle photo
+        return $this->getCurrentPhoto($game);
+    }
+
 
     public function endGame(GameDTO $game): void
     {
-        $game->state= 'FINISHED';
+        $game->state = 'FINISHED';
         $this->gameRepository->save($game->toEntity());
     }
 
@@ -139,31 +178,36 @@ class GameService implements GameServiceInterface
     {
         $photoIds = $game->photoIds;
         $currentPhotoIndex = $game->currentPhotoIndex;
-    
+
         error_log("PhotoIds: " . json_encode($photoIds));
         error_log("Current Photo Index: " . $currentPhotoIndex);
-    
+
         if (empty($photoIds) || !isset($photoIds[$currentPhotoIndex])) {
             error_log("No valid photo ID found for the current index.");
             return null;
         }
-    
+
         $photoId = $photoIds[$currentPhotoIndex];
         error_log("Fetching photo with ID: " . $photoId);
-    
+
         $photo = $this->serieService->getPhotoBySerie($game->serieId)
             ->filter(fn($photo) => $photo->getId() === $photoId)
             ->first();
-    
+
         if (!$photo) {
             error_log("No photo found with ID: " . $photoId);
             return null;
         }
-    
+
         error_log("Photo found: " . var_export($photo, true));
         return $photo;
     }
-    
+
+    public function getHighestScoreBySerieForUser(string $serieId, string $userId): int
+    {
+        return $this->gameRepository->getHighestScoreBySerieForUser($serieId, $userId);
+    }
+
     public function getGameState(GameDTO $game): string
     {
         return $game->state;
@@ -173,22 +217,31 @@ class GameService implements GameServiceInterface
         float $lat1,
         float $lon1,
         float $lat2,
-        float $lon2
+        float $lon2,
+        float $largeur
     ): float {
-        $earthRadius = 6371000;
-        $lat1 = deg2rad($lat1);
-        $lon1 = deg2rad($lon1);
-        $lat2 = deg2rad($lat2);
-        $lon2 = deg2rad($lon2);
-
-        $dlat = $lat2 - $lat1;
-        $dlon = $lon2 - $lon1;
-
-        $a = sin($dlat / 2) * sin($dlat / 2) +
-            cos($lat1) * cos($lat2) *
-            sin($dlon / 2) * sin($dlon / 2);
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        return $earthRadius * $c;
+        // Calculer la différence entre les latitudes et longitudes
+        $latDiff = abs($lat2 - $lat1);
+        $lonDiff = abs($lon2 - $lon1);
+    
+        // Afficher les différences de latitude et de longitude
+        var_dump("Latitude Difference: ", $latDiff);
+        var_dump("Longitude Difference: ", $lonDiff);
+    
+        // Calculer la distance approximative
+        $distance = ($latDiff + $lonDiff) * 111;  // 1 degré de latitude ≈ 111 km
+    
+        // Ajuster la distance en fonction de la largeur
+        $adjustedDistance = $distance * (1 + $largeur / 1000); // Ajuste la distance en fonction de la largeur
+    
+        // Affichage de la distance ajustée
+        var_dump("Adjusted Distance: ", $adjustedDistance);
+    
+        return $adjustedDistance;
     }
+    
+        
+    
+    
+    
 }

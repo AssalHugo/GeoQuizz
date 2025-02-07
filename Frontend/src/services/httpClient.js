@@ -6,7 +6,7 @@ let isRefreshing = false
 let refreshSubscribers = []
 
 const request = async (endpoint, method = 'GET', body = null, isAuthRequest = false) => {
-  const token = localStorage.getItem('token')
+  const token = useUserStore().token
   const headers = {
     'Content-Type': 'application/json',
     ...(!isAuthRequest &&
@@ -102,4 +102,8 @@ export function getSerieById(serieId) {
 
 export function validateAnswer(gameId, lat, long) {
   return request(`/games/${gameId}/answer`, 'POST', { latitude: lat, longitude: long })
+}
+
+export function validateToken() {
+  return request('/tokens/validate', 'POST')
 }

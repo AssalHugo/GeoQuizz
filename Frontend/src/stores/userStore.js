@@ -14,14 +14,14 @@ export const useUserStore = defineStore('user', {
   },
   getters: {
     isAuthenticated() {
-      return this.token !== null
+      return !!this.token
     },
-    //Retourne l'id de l'user
+    // Return the user's id
     user() {
-      if (!this.token) return null
-      const payload = JSON.parse(atob(this.token.split('.')[1]))
-      //On retourne la partie sub de l'user
-      if (payload.user) return payload.user.sub
+      if (!this.token) return null;
+      const payload = JSON.parse(atob(this.token.split('.')[1]));
+      // Return the user's sub part
+      if (payload.user) return payload.user.sub;
     },
   },
   persist: true,
