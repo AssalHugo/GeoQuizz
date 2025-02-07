@@ -58,11 +58,7 @@ class GameService implements GameServiceInterface
 
     public function isFinished(GameDTO $game): bool
     {
-        $finished = false;
-        if($game->currentPhotoIndex=10){
-            $finished = true;
-        }
-        return $finished;
+        return $game->currentPhotoIndex >= count($game->photoIds);
     }
 
     public function startGame(GameDTO $game): void
@@ -74,34 +70,30 @@ class GameService implements GameServiceInterface
 
     public function calculateScore(GameDTO $game, float $distance, float $responseTime): int
     {
-        $points = 0;
+        $distanceInMeters = $distance;
 
-        // Gérer les petites distances en attribuant un score plus élevé
-        if ($distance < 0.01) {  // Moins de 10 mètres
-            $points = 10;
-        } elseif ($distance < 0.05) {  // Moins de 50 mètres
-            $points = 8;
-        } elseif ($distance < 0.1) {  // Moins de 100 mètres
-            $points = 6;
-        } elseif ($distance < 0.2) {  // Moins de 200 mètres
-            $points = 4;
-        } else {
-            $points = 2;
-        }
+        $points = match(true) {
+            $distanceInMeters < 100    => 10,   // Moins de 100m : parfait
+            $distanceInMeters < 500    => 8,    // Moins de 500m
+            $distanceInMeters < 1000   => 6,    // Moins de 1km
+            $distanceInMeters < 2000   => 4,    // Moins de 2km
+            $distanceInMeters < 5000   => 2,    // Moins de 5km
+            $distanceInMeters < 10000  => 1,    // Moins de 10km
+            $distanceInMeters < 20000  => 0.5,    // Moins de 20km
+            default                    => 0     // Au-delà de 10km
+        };
 
-        // Ajuster les points en fonction du temps de réponse
-        $multiplier = 1;
-        if ($responseTime < 5) {
-            $multiplier = 4;
-        } elseif ($responseTime < 10) {
-            $multiplier = 2;
-        }
-        // Calculer le score final
-        $finalScore = $points * $multiplier;
+        $multiplier = match(true) {
+            $responseTime < 10000  => 4,  // Moins de 10s
+            $responseTime < 20000  => 2,  // Moins de 20s
+            $responseTime < 30000  => 1,  // Moins de 30s
+            default             => 0   // Trop lent
+        };
 
-        return $finalScore;
+        return $points * $multiplier;
     }
 
+    
     public function giveAnswer(GameDTO $game, float $latitude, float $longitude): int
     {
         $currentPhoto = $this->getCurrentPhoto($game);
@@ -137,12 +129,12 @@ class GameService implements GameServiceInterface
     {
         // Vérifier si la partie est terminée
         if ($this->isFinished($game)) {
+            $this->endGame($game);
             return null;
-        } elseif($game->gameRepository = 10) {
-            $this->endGame(game: $game);
+        }
 
-        } elseif($game->gameRepository = 10){
-            // Passer à la photo suivante
+        // Passer à la photo suivante
+        if ($game->currentPhotoIndex < count($game->photoIds) - 1) {
             $game->currentPhotoIndex++;
 
             // Sauvegarder en base
@@ -152,6 +144,9 @@ class GameService implements GameServiceInterface
             return $this->getCurrentPhoto($game);
         }
 
+        // Si aucune photo suivante, marquer le jeu comme terminé
+        $this->endGame($game);
+        return null;
     }
 
 
@@ -236,18 +231,33 @@ class GameService implements GameServiceInterface
         float $lat1,
         float $lon1,
         float $lat2,
-        float $lon2,
-        float $largeur
+        float $lon2
     ): float {
-        // Calculer la différence entre les latitudes et longitudes
-        $latDiff = abs($lat2 - $lat1);
-        $lonDiff = abs($lon2 - $lon1);
+        $earthRadius = 6371000; // Rayon de la Terre en mètres
 
-        // Calculer la distance approximative
-        $distance = ($latDiff + $lonDiff) * 111;  // 1 degré de latitude ≈ 111 km
+        // Conversion des degrés en radians
+        $latFrom = deg2rad($lat1);
+        $lonFrom = deg2rad($lon1);
+        $latTo = deg2rad($lat2);
+        $lonTo = deg2rad($lon2);
 
-        // Ajuster la distance en fonction de la largeur
-        $adjustedDistance = $distance * (1 + $largeur / 1000); // Ajuste la distance en fonction de la largeur
-        return $adjustedDistance;
+        // Différences de coordonnées
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        // Formule Haversine
+        $angle = 2 * asin(
+            sqrt(
+                pow(sin($latDelta / 2), 2) +
+                cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)
+            )
+        );
+
+        return $angle * $earthRadius; // Distance en mètres
     }
+    
+        
+    
+    
+    
 }

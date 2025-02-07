@@ -51,6 +51,7 @@ class SignInAction extends AbstractAction
 
         $data = [
             'token' => $authDTO->accessToken,
+            'refresh_token' => $authDTO->refreshToken,
             'links' => [
                 'self' => ['href' => '/auth/signin'],
                 'refresh' => ['href' => '/auth/refresh']
