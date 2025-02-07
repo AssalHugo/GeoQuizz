@@ -1,5 +1,4 @@
-CREATE TABLE "user" (
+CREATE TABLE "users" (
   "id" UUID PRIMARY KEY,
-  "password" varchar,
-  "user_id" UUID
+  "password" varchar
 );
