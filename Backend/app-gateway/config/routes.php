@@ -9,8 +9,6 @@ return function (\Slim\App $app): \Slim\App {
         return $response;
     });
 
-    $app->get('/', \gateway_geo\application\actions\HomeAction::class);
-
     // Requête vers le microservice Auth
     $app->post('/auth/signin', \gateway_geo\application\actions\GatewaySignInAction::class);
     $app->post('/auth/register', \gateway_geo\application\actions\GatewayRegisterAction::class);
@@ -33,14 +31,6 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/games/{id}/score', \gateway_geo\application\actions\GatewayGetGameScoreAction::class);
     $app->get('/games/{id}/state', \gateway_geo\application\actions\GatewayGetGameStateAction::class);
     $app->get('/users/{userId}/series/{serieId}/highest-score', \gateway_geo\application\actions\GetHighestScoreBySerieForUserAction::class);
-
-    $app->post('/auth/register', \gateway_geo\application\actions\GatewayRegisterAction::class);
-
-    $app->post('/auth/signin', \gateway_geo\application\actions\GatewayLoginAction::class);
-
-    $app->get('/auth/refresh', \gateway_geo\application\actions\GatewayRefreshAction::class);
-
-    $app->post('/tokens/validate', \gateway_geo\application\actions\GatewayValidateTokenAction::class);
 
     return $app;
 };
