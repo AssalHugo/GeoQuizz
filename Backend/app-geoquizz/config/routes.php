@@ -8,7 +8,8 @@ use Slim\App;
 use api_geoquizz\application\actions\CreateGameAction;
 use api_geoquizz\application\actions\EndGameAction;
 use api_geoquizz\application\actions\GetCurrentPhotoAction;
-use api_geoquizz\application\actions\GetGameAction;
+use api_geoquizz\application\actions\GetGameByIdAction;
+use api_geoquizz\application\actions\GetGamesAction;
 use api_geoquizz\application\actions\GetGameScoreAction;
 use api_geoquizz\application\actions\GetGameStateAction;
 use api_geoquizz\application\actions\HomeAction;
@@ -17,6 +18,7 @@ use api_geoquizz\application\actions\StartGameAction;
 use api_geoquizz\application\actions\CreateUserAction;
 use api_geoquizz\application\actions\GetUserByEmailAction;
 use api_geoquizz\application\actions\GetUserByIdAction;
+use api_geoquizz\application\actions\GetNextPhotoAction;
 
 return function (App $app): App {
     // Page d'accueil
@@ -24,9 +26,11 @@ return function (App $app): App {
 
     // Routes pour les jeux
     $app->post('/games', CreateGameAction::class);
-    $app->get('/games/{id}', GetGameAction::class);
+    $app->get('/games/{id}', GetGameByIdAction::class);
+    $app->get('/dashboard', GetGamesAction::class);
     $app->patch('/games/{id}/start', StartGameAction::class);
     $app->post('/games/{id}/answer', PlayGameAction::class);
+    $app->get('/games/{id}/next-photo', GetNextPhotoAction::class);
     $app->patch('/games/{id}/end', EndGameAction::class);
     $app->get('/games/{id}/current-photo', GetCurrentPhotoAction::class);
     $app->get('/games/{id}/score', GetGameScoreAction::class);

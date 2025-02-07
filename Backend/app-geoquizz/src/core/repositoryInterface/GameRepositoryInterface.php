@@ -10,6 +10,7 @@ interface GameRepositoryInterface
     public function save(Game $game): void;
 
     public function findById(string $id): ?Game;
+    public function findAll(): array;
 
     public function getHighestScoreBySerieForUser(string $serieId, string $userId);
 

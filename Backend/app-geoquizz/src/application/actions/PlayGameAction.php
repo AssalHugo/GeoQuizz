@@ -34,7 +34,7 @@ class PlayGameAction extends AbstractAction {
 
         try {
             $game = $this->gameService->getGameById($args['id']);
-            $this->gameService->updateGameProgress($game, $body['latitude'], $body['longitude']);
+            $this->gameService->giveAnswer($game, $body['latitude'], $body['longitude']);
 
             $data = [
                 'score' => $game->score,

@@ -9,7 +9,7 @@ use api_geoquizz\application\renderer\JsonRenderer;
 use Slim\Psr7\Response;
 use Slim\App;
 
-class GetGameAction extends AbstractAction {
+class GetGameByIdAction extends AbstractAction {
     private GameServiceInterface $gameService;
     
     public function __construct(GameServiceInterface $gameService) {

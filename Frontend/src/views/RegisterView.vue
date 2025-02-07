@@ -22,7 +22,7 @@ export default {
           this.$router.push("/login");
         })
         .catch((error) => {
-          this.error = error.response.message;
+          console.error(error);
         });
     },
   },
