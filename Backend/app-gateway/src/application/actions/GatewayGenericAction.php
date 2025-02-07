@@ -41,26 +41,11 @@ class GatewayGenericAction extends AbstractGatewayAction
         try {
             $response = $this->remote->request($method, $uri, $options);
         } catch (RequestException $e) {
-            $errorResponse = $e->getResponse();
-            $errorBody = json_decode($errorResponse?->getBody()->getContents(), true);
-
-            $errorData = [
-                'message' => match ($e->getCode()) {
-                    404 => "Not found",
-                    403 => "Access forbidden",
-                    400 => "Bad request",
-                    500 => "Internal server error",
-                    default => "Error"
-                },
-                'details' => $errorBody ?? $e->getMessage(),
-                'status' => $e->getCode()
-            ];
-
             throw match ($e->getCode()) {
-                404 => new HttpNotFoundException($rq, json_encode($errorData)),
-                403 => new HttpForbiddenException($rq, json_encode($errorData)),
-                400 => new HttpBadRequestException($rq, json_encode($errorData)),
-                default => new HttpInternalServerErrorException($rq, json_encode($errorData)),
+                404 => new HttpNotFoundException($rq, $e->getMessage()),
+                403 => new HttpForbiddenException($rq, $e->getMessage()),
+                400 => new HttpBadRequestException($rq, $e->getMessage()),
+                default => new HttpInternalServerErrorException($rq, $e->getMessage()),
             };
         }
         return $response;
