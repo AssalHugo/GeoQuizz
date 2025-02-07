@@ -15,7 +15,7 @@ export default {
 
     const setupMap = () => {
       const center = [props.serie.data.latitude, props.serie.data.longitude];
-      const zoom = 13;
+      const zoom = props.serie.data.largeur;
 
       if (map.value) map.value.remove();
 
@@ -49,6 +49,9 @@ export default {
           [props.currentPhoto.latitude, props.currentPhoto.longitude],
           { icon: correctIcon }
         ).addTo(map.value);
+
+        map.value.setView([props.currentPhoto.latitude, props.currentPhoto.longitude], props.serie.data.largeur);
+
       } else if (!newValue && correctMarker.value) {
         map.value.removeLayer(correctMarker.value);
         correctMarker.value = null;
