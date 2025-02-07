@@ -39,6 +39,7 @@ class RefreshAction extends AbstractAction
 
         $data = [
             'token' => $authDTO->accessToken,
+            'refresh_token' => $authDTO->refreshToken,
             'links' => [
                 'self' => ['href' => '/auth/refresh'],
             ]

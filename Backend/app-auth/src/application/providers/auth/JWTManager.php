@@ -24,7 +24,14 @@ class JWTManager
 
     public function createRefreshToken(array $payload): string
     {
-        return $this->createAccessToken($payload);
+        $refreshPayload = [
+            'iat' => time(),
+            'exp' => time() + (3600 * 24 * 7),
+            'sub' => $payload['sub'],
+            'data' => $payload['data'],
+        ];
+
+        return $this->createAccessToken($refreshPayload);
     }
 
     public function decodeToken(string $token): array
