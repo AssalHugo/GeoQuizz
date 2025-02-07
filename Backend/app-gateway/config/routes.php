@@ -31,7 +31,7 @@ return function (\Slim\App $app): \Slim\App {
     $app->get('/games/{id}/current-photo', \gateway_geo\application\actions\GatewayGetCurrentPhotoAction::class);
     $app->get('/games/{id}/score', \gateway_geo\application\actions\GatewayGetGameScoreAction::class);
     $app->get('/games/{id}/state', \gateway_geo\application\actions\GatewayGetGameStateAction::class);
-    $app->get('/users/{userId}/series/{serieId}/highest-score', \gateway_geo\application\actions\GatewayGetHighestScoreBySerieForUserAction::class);
+    $app->get('/users/{userId}/highest-score', \gateway_geo\application\actions\GatewayGetHighestScoreBySerieForUserAction::class);
 
     return $app;
 };

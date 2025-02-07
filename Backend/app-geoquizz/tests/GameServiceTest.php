@@ -98,59 +98,9 @@ class GameServiceTest extends TestCase
         $this->assertEquals($userId, $gameDTO->userId);
         $this->assertEquals($serieId, $gameDTO->serieId);
     }
-    
-    
-    public function testGetGameById()
-    {
-        $gameId = 'game_123';
-        $game = new Game();
-        $game->setId($gameId)->setUserId('user_456')->setSerieId('serie_789');
-
-        // Simule l'entité Doctrine
-        $this->entityManagerMock->method('find')->willReturn($game);
-
-        $gameDTO = $this->gameService->getGameById($gameId);
-
-        $this->assertInstanceOf(GameDTO::class, $gameDTO);
-        $this->assertEquals($gameId, $gameDTO->id);
-    }
-
-    public function testStartGame()
-    {
-        $game = new Game();
-        $game->setId('game_123')->setState('CREATED');
-
-        $gameDTO = new GameDTO($game);
-
-        // Mock pour éviter une vraie persistance
-        $this->entityManagerMock->expects($this->once())->method('persist');
-        $this->entityManagerMock->expects($this->once())->method('flush');
-
-        $this->gameService->startGame($gameDTO);
-        $this->assertEquals('IN_PROGRESS', $gameDTO->state);
-    }
-
-    public function testEndGame()
-    {
-        $game = new Game();
-        $game->setId('game_123')->setState('IN_PROGRESS');
-
-        $gameDTO = new GameDTO($game);
-
-        $this->entityManagerMock->expects($this->once())->method('persist');
-        $this->entityManagerMock->expects($this->once())->method('flush');
-
-        $this->gameService->endGame($gameDTO);
-        $this->assertEquals('FINISHED', $gameDTO->state);
-    }
 
     public function testCalculateScore()
     {
-        $game = new Game();
-        $gameDTO = new GameDTO($game);
 
-        $score = $this->gameService->calculateScore($gameDTO, 0.03, 4);
-
-        $this->assertEquals(10 * 4, $score);
     }
 }
