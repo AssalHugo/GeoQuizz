@@ -71,27 +71,29 @@ class GameService implements GameServiceInterface
 
     public function calculateScore(GameDTO $game, float $distance, float $responseTime): int
     {
-        // Conversion en mètres
         $distanceInMeters = $distance;
     
         $points = match(true) {
-            $distanceInMeters < 100   => 10,   // Moins de 10m : parfait
-            $distanceInMeters < 500   => 8,    // Moins de 50m
-            $distanceInMeters < 1000  => 6,    // Moins de 100m
-            $distanceInMeters < 2000  => 4,    // Moins de 200m
-            $distanceInMeters < 5000  => 2,    // Moins de 500m
-            default                  => 0     // Au-delà
+            $distanceInMeters < 100    => 10,   // Moins de 100m : parfait
+            $distanceInMeters < 500    => 8,    // Moins de 500m
+            $distanceInMeters < 1000   => 6,    // Moins de 1km
+            $distanceInMeters < 2000   => 4,    // Moins de 2km
+            $distanceInMeters < 5000   => 2,    // Moins de 5km
+            $distanceInMeters < 10000  => 1,    // Moins de 10km
+            $distanceInMeters < 20000  => 0.5,    // Moins de 20km
+            default                    => 0     // Au-delà de 10km
         };
     
         $multiplier = match(true) {
-            $responseTime < 10  => 4,  // Moins de 5s
-            $responseTime < 20 => 2,  // Moins de 10s
-            $responseTime < 30 => 1,  // Moins de 20s
-            default            => 0   // Trop lent
+            $responseTime < 10  => 4,  // Moins de 10s
+            $responseTime < 20  => 2,  // Moins de 20s
+            $responseTime < 30  => 1,  // Moins de 30s
+            default             => 0   // Trop lent
         };
     
         return $points * $multiplier;
     }
+    
     
     public function giveAnswer(GameDTO $game, float $latitude, float $longitude): int
     {
