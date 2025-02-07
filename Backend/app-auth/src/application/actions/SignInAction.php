@@ -6,7 +6,7 @@ use app_auth\application\providers\auth\AuthProviderInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use app_auth\core\dto\CredentialsDTO;
-use app_auth\core\services\exceptions\ServiceAuthInvalidDataException;
+use app_auth\core\services\auth\ServiceAuthInvalidDataException;
 use app_auth\application\renderer\JsonRenderer;
 
 class SignInAction extends AbstractAction
