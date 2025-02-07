@@ -68,10 +68,9 @@ docker compose up -d
 
     1. Dans Adminer, aller dans "Importer"
     2. Sélectionner les fichiers SQL suivants et les importer un par un :
-        ```GEOQUIZZ_seriesDirectus.sql```
-        ```GEOQUIZZ_dataDirectus.sql```
-        ```GEOQUIZZ_Auth.sql```
-        ```GEOQUIZZ_servicesGeoquizz.sql```
+        ```GEOQUIZZ_Auth.sql``` (pour auth.db)
+        ```GEOQUIZZ_servicesGeoquizz.sql``` (pour geoquizz.db)
+        ```GEOQUIZZ_seriesDirectus.sql``` et ```GEOQUIZZ_dataDirectus.sql``` (pour directus.db)
 
 ### 4. Configuration de Directus
 
