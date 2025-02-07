@@ -45,7 +45,7 @@ export default {
   <div class="flex flex-col gap-2">
     <!-- Score display -->
     <div class="bg-black/60 backdrop-blur-sm rounded-lg px-4 py-2">
-      <p class="text-white">Score de cette manche: {{ score }} / 20</p>
+      <p class="text-white">Score de cette manche: {{ score }} / 40</p>
     </div>
 
     <!-- Validate button -->

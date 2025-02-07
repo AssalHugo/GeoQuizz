@@ -84,9 +84,9 @@ class GameService implements GameServiceInterface
         };
 
         $multiplier = match (true) {
-            $responseTime < 10000  => 4,  // Moins de 10s
-            $responseTime < 20000  => 2,  // Moins de 20s
-            $responseTime < 30000  => 1,  // Moins de 30s
+            $responseTime < 1000  => 4,  // Moins de 10s
+            $responseTime < 2000  => 2,  // Moins de 20s
+            $responseTime < 3000  => 1,  // Moins de 30s
             default             => 0   // Trop lent
         };
 
