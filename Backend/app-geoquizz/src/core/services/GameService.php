@@ -9,6 +9,7 @@ use api_geoquizz\core\dto\GameDTO;
 use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
 use Ramsey\Uuid\Uuid;
+use api_geoquizz\application\providers\game\GameJWTProvider;
 
 use function PHPUnit\Framework\throwException;
 
@@ -16,14 +17,17 @@ class GameService implements GameServiceInterface
 {
     private GameRepositoryInterface $gameRepository;
     private SerieDirectusInterface $serieService;
+    private GameJWTProvider $gameJWTProvider;
 
     public function __construct(
         GameRepositoryInterface $gameRepository,
-        SerieDirectusInterface  $serieService
+        SerieDirectusInterface  $serieService,
+        GameJWTProvider $gameJWTProvider
     )
     {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
+        $this->gameJWTProvider = $gameJWTProvider;
     }
 
     public function getGames(): array
@@ -39,12 +43,14 @@ class GameService implements GameServiceInterface
 
     public function createGame(string $serieId, string $userId): GameDTO
     {
+        // Création du jeu
         $game = new Game();
         $serie = $this->serieService->getSerieById($serieId);
         $photos = $serie->photos->toArray();
         shuffle($photos);
         $photoIds = array_slice(array_map(fn($photo) => $photo->getId(), $photos), 0, 10);
-
+    
+        // Attribution des propriétés du jeu
         $game->setId(Uuid::uuid4()->toString())
             ->setUserId($userId)
             ->setSerieId($serieId)
@@ -52,10 +58,27 @@ class GameService implements GameServiceInterface
             ->setState('CREATED')
             ->setScore(0)
             ->setCurrentPhotoIndex(1);
-
+    
+        // Sauvegarde du jeu
         $this->gameRepository->save($game);
-        return $game->toDTO();
+    
+        // Générer le token
+        $gameData = [
+            'id' => $game->getId(),
+            'userId' => $userId,
+            'serieId' => $serieId
+        ];
+    
+        $token = $this->gameJWTProvider->generateToken($gameData);  // Utilisation de la méthode `generateToken`
+    
+        // Retourner le jeu avec le token JWT
+        $gameDTO = $game->toDTO();
+        $gameDTO->token = $token;  // Ajouter le token à l'objet DTO
+    
+        return $gameDTO;
     }
+
+    
 
     public function isFinished(GameDTO $game): bool
     {

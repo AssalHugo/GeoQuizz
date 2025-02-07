@@ -105,7 +105,8 @@ class CreateGameAction extends AbstractAction {
         }
 
         $data = [
-            'gameId' => $game,
+            'game' => $game,  // GameDTO contient la méthode getId() pour obtenir l'ID du jeu
+            'token' => $game->token,     // Inclusion du token dans la réponse
         ];
 
         return JsonRenderer::render($rs, 201, $data);
