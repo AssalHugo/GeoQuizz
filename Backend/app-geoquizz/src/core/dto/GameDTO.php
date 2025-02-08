@@ -13,6 +13,7 @@ class GameDTO extends DTO
     protected string $state;
     protected int $currentPhotoIndex;
     protected ?\DateTimeImmutable $startTime;
+    protected ?array $token;
 
     public function __construct(Game $game)
     {
@@ -24,6 +25,12 @@ class GameDTO extends DTO
         $this->state = $game->getState();
         $this->currentPhotoIndex = $game->getCurrentPhotoIndex();
         $this->startTime = $game->getStartTime();
+        $this->token = null;
+    }
+
+    public function setToken(array $token): void
+    {
+        $this->token = $token;
     }
 
     public function jsonSerialize(): array
@@ -36,7 +43,8 @@ class GameDTO extends DTO
             'score' => $this->score,
             'state' => $this->state,
             'currentPhotoIndex' => $this->currentPhotoIndex,
-            'startTime' => $this->startTime?->format('c')
+            'startTime' => $this->startTime?->format('c'),
+            'token' => $this->token
         ];
     }
     public function toEntity(): Game

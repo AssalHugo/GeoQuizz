@@ -9,6 +9,8 @@ use api_geoquizz\application\actions\GetUserByEmailAction;
 use api_geoquizz\application\actions\GetUserByIdAction;
 use api_geoquizz\application\actions\PlayGameAction;
 use api_geoquizz\application\actions\StartGameAction;
+use api_geoquizz\application\providers\JWTGameManager;
+use api_geoquizz\application\providers\JWTGameProviderInterface;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
 use Doctrine\ORM\EntityManager;
 use Psr\Container\ContainerInterface;
@@ -66,13 +68,17 @@ return [
     GameRepositoryInterface::class => function (ContainerInterface $container) {
         return new GameRepository($container->get(EntityManager::class));
     },
+    JWTGameManager::class => function (ContainerInterface $container) {
+        return new JWTGameManager(getenv('JWT_GAME_SECRET_KEY'), 'HS512');
+    },
     GameServiceInterface::class => function (ContainerInterface $container) {
-        return new GameService($container->get(GameRepositoryInterface::class), $container->get(SerieDirectusInterface::class) );
+        return new GameService($container->get(GameRepositoryInterface::class), $container->get(SerieDirectusInterface::class), $container->get(JWTGameManager::class) );
     },
     GameService::class => function (ContainerInterface $container) {
         return new GameService(
             $container->get(GameRepositoryInterface::class),
-            $container->get(SerieDirectusInterface::class)
+            $container->get(SerieDirectusInterface::class),
+            $container->get(JWTGameManager::class)
         );
     },
     CreateGameAction::class => function (ContainerInterface $container) {

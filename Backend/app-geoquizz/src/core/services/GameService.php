@@ -8,6 +8,7 @@ use api_geoquizz\core\domain\entities\seriesDirectus\Serie;
 use api_geoquizz\core\dto\GameDTO;
 use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
+use api_geoquizz\application\providers\JWTGameManager;
 use Ramsey\Uuid\Uuid;
 
 use function PHPUnit\Framework\throwException;
@@ -16,14 +17,17 @@ class GameService implements GameServiceInterface
 {
     private GameRepositoryInterface $gameRepository;
     private SerieDirectusInterface $serieService;
+    private JWTGameManager $jwtGameManager;
 
     public function __construct(
         GameRepositoryInterface $gameRepository,
-        SerieDirectusInterface  $serieService
+        SerieDirectusInterface  $serieService,
+        JWTGameManager $jwtGameManager
     )
     {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
+        $this->jwtGameManager = $jwtGameManager;
     }
 
     public function getGames(): array
@@ -54,7 +58,12 @@ class GameService implements GameServiceInterface
             ->setCurrentPhotoIndex(1);
 
         $this->gameRepository->save($game);
-        return $game->toDTO();
+        $gameDTO = $game->toDTO();
+        $token = $this->jwtGameManager->createGameToken(['id' => $game->getId(), 'userId' => $game->getUserId(), 'serieId' => $game->getSerieId(), 'state' => $game->getState()]);
+        $refreshToken = $this->jwtGameManager->createGameRefreshToken($game->getId(), $game->getUserId());
+        $gameDTO->setToken(['token' => $token, 'refreshToken' => $refreshToken]);
+        return $gameDTO;
+        var_dump($gameDTO);
     }
 
     public function isFinished(GameDTO $game): bool
@@ -109,7 +118,6 @@ class GameService implements GameServiceInterface
             $longitude,
             $currentPhoto->getLatitude(),
             $currentPhoto->getLongitude(),
-            $largeur
         );
     
         $startTime = $game->startTime ?? new \DateTimeImmutable();
