@@ -61,6 +61,9 @@ export default {
             }
           })
 
+          this.markerLat = 0;
+          this.markerLong = 0;
+
         } else if (this.game.state === "FINISHED") {
           this.finished = true
         }

@@ -6,40 +6,39 @@ let userStore = useUserStore()
 </script>
 
 <template>
+
   <header class="bg-gradient-to-r from-blue-600 to-blue-400 text-white p-6 shadow-lg">
-    <div
-      v-if="userStore.isAuthenticated"
-      class="container mx-auto flex justify-between items-center"
-    >
+    <div v-if="userStore.isAuthenticated" class="container mx-auto flex justify-between items-center px-6">
       <RouterLink to="/" class="text-2xl font-extrabold tracking-wide hover:underline">
         GeoQuizz
       </RouterLink>
 
-      <nav class="flex space-x-4">
-        <RouterLink to="/profile" class="text-lg hover:text-blue-200 transition"
-          >Profile
+      <nav class="flex items-center space-x-4">
+        <RouterLink to="/profile"
+          class="px-4 py-2 rounded-full border-2 border-white text-white hover:bg-white hover:text-black transition-colors">
+          Profile
         </RouterLink>
         <RouterLink to="/login">
-          <button
-            @click="userStore.logout"
-            class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full shadow-md transition"
-          >
+          <button @click="userStore.logout"
+            class="px-4 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors shadow-lg hover:shadow-xl">
             Logout
           </button>
         </RouterLink>
       </nav>
     </div>
-    <div v-else class="container mx-auto flex justify-between items-center">
-      <RouterLink to="/" class="text-2xl font-extrabold tracking-wide hover:underline">
+
+    <div v-else class="container mx-auto flex justify-between items-center px-6">
+      <RouterLink to="/" class="text-2xl font-extrabold tracking-wide hover:text-blue-300 transition-colors">
         GeoQuizz
       </RouterLink>
 
-      <nav class="flex space-x-4">
-        <RouterLink to="/login" class="text-lg hover:text-blue-200 transition">Login</RouterLink>
-        <RouterLink
-          to="/register"
-          class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full shadow-md transition"
-        >
+      <nav class="flex items-center space-x-4">
+        <RouterLink to="/login"
+          class="px-4 py-2 rounded-full border-2 border-white text-white hover:bg-white hover:text-black transition-colors">
+          Login
+        </RouterLink>
+        <RouterLink to="/register"
+          class="px-4 py-2 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors shadow-lg hover:shadow-xl">
           Register
         </RouterLink>
       </nav>

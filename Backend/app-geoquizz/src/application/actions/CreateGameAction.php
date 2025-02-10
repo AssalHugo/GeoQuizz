@@ -12,14 +12,17 @@ use api_geoquizz\core\repositoryInterface\RepositoryEntityValidationException;
 use api_geoquizz\core\repositoryInterface\RepositoryConnectionException;
 use api_geoquizz\core\repositoryInterface\RepositoryException;
 
-class CreateGameAction extends AbstractAction {
+class CreateGameAction extends AbstractAction
+{
     private GameServiceInterface $gameService;
-    
-    public function __construct(GameServiceInterface $gameService) {
+
+    public function __construct(GameServiceInterface $gameService)
+    {
         $this->gameService = $gameService;
     }
-    
-    public function __invoke(Request $rq, Response $rs, array $args): Response {
+
+    public function __invoke(Request $rq, Response $rs, array $args): Response
+    {
         $body = $rq->getParsedBody();
         if (!isset($body['serieId']) || !isset($body['userId'])) {
             $data = [
@@ -105,9 +108,9 @@ class CreateGameAction extends AbstractAction {
         }
 
         $data = [
-            'gameId' => $game,
+            'gameId' => $game->id,
+            'gametoken' => $game->token,
         ];
-
         return JsonRenderer::render($rs, 201, $data);
     }
 }
