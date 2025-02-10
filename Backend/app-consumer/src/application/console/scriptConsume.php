@@ -24,8 +24,6 @@ $callback = function ($msg) use ($serviceMail) {
             $messageData
         );
 
-        print_r($messageData);
-
         echo " [x] Email sent for message type {$messageData['message']}\n";
     } catch (\Exception $e) {
         echo " [x] Error sending email: {$e->getMessage()}\n";
