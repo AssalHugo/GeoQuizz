@@ -8,6 +8,7 @@ use api_geoquizz\core\domain\entities\seriesDirectus\Serie;
 use api_geoquizz\core\dto\GameDTO;
 use api_geoquizz\core\repositoryInterface\GameRepositoryInterface;
 use api_geoquizz\core\services\seriesDirectus\SerieDirectusInterface;
+use api_geoquizz\application\providers\JWTGameManager;
 use api_geoquizz\core\services\user\UserServiceInterface;
 use Ramsey\Uuid\Uuid;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -18,17 +19,20 @@ class GameService implements GameServiceInterface
 {
     private GameRepositoryInterface $gameRepository;
     private SerieDirectusInterface $serieService;
+    private JWTGameManager $jwtGameManager;
     private UserServiceInterface $userService;
     private AMQPStreamConnection $connection;
 
     public function __construct(
         GameRepositoryInterface $gameRepository,
         SerieDirectusInterface  $serieService,
+        JWTGameManager $jwtGameManager,
         UserServiceInterface $userService,
         AMQPStreamConnection $connection
     ) {
         $this->gameRepository = $gameRepository;
         $this->serieService = $serieService;
+        $this->jwtGameManager = $jwtGameManager;
         $this->userService = $userService;
         $this->connection = $connection;
     }
@@ -61,8 +65,13 @@ class GameService implements GameServiceInterface
             ->setCurrentPhotoIndex(1);
 
         $this->gameRepository->save($game);
+        $gameDTO = $game->toDTO();
+        $token = $this->jwtGameManager->createGameToken(['id' => $game->getId(), 'userId' => $game->getUserId(), 'serieId' => $game->getSerieId(), 'state' => $game->getState()]);
+        $refreshToken = $this->jwtGameManager->createGameRefreshToken($game->getId(), $game->getUserId());
+        $gameDTO->setToken(['token' => $token, 'refreshToken' => $refreshToken]);
         $this->sendMessageGame("CREATE", $game->getId());
-        return $game->toDTO();
+        return $gameDTO;
+        var_dump($gameDTO);
     }
 
     public function isFinished(GameDTO $game): bool
@@ -117,7 +126,6 @@ class GameService implements GameServiceInterface
             $longitude,
             $currentPhoto->getLatitude(),
             $currentPhoto->getLongitude(),
-            $largeur
         );
 
         $startTime = $game->startTime ?? new \DateTimeImmutable();

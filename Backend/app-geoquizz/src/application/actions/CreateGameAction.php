@@ -105,9 +105,10 @@ class CreateGameAction extends AbstractAction {
         }
 
         $data = [
-            'gameId' => $game,
+            'gameId' => $game->id,
+            'gametoken' => $game->token,
         ];
-
+        //var_dump($data);
         return JsonRenderer::render($rs, 201, $data);
     }
 }
