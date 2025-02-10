@@ -5,7 +5,7 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -16,7 +16,7 @@ services:
     ports:
       # - 32501:8080
       - 1001:8080
-    # command: php -S 0.0.0.0:8080 -t /var/www/html
+    command: php -S 0.0.0.0:8080 -t /var/www/html
 
   gateway.geoquizz:
     build:
@@ -89,4 +89,57 @@ services:
         condition: service_healthy
       cache:
         condition: service_healthy
-    
+
+  frontend:
+    image: node:latest
+    working_dir: /app
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    ports:
+      - 8080:5173
+    command: sh -c "npm install && npm run dev"
+
+  #######################################
+  ### RabbitMQ Service
+  ###
+  #######################################
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    volumes:
+      - ./Backend/rabbitmq_dir:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=root
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 8s
+      timeout: 30s
+      retries: 3
+
+  app.consumer:
+    build:
+      context: build
+      dockerfile: Dockerfile_Principal
+    ports:
+      - 1006:80
+    volumes:
+      - ./Backend/app-consumer:/var/php
+    working_dir: /var/php
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: php -S 0.0.0.0:80 -t /var/php/public
+
+  app.mailcatcher:
+    build:
+      context: build
+      dockerfile: Dockerfile_mailCatcher
+    ports:
+      - 1080:1080
+      - 1025:1025
+    depends_on:
+      - app.consumer

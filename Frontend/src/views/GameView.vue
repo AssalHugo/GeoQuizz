@@ -85,10 +85,8 @@ export default {
       <PhotoComponent :current-photo="currentPhoto" />
     </div>
 
-    <!-- Titre et boutons -->
     <div class="absolute top-0 left-0 right-0 z-20">
       <div class="container mx-auto px-6 py-6 flex justify-between items-start">
-        <!-- Titre et score -->
         <div class="space-y-2">
           <div v-if="serie" class="bg-black/60 backdrop-blur-sm rounded-lg px-4 py-2">
             <h1 class="text-2xl font-bold text-white">{{ serie.data.titre }}</h1>
