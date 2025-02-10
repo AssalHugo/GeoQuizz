@@ -13,8 +13,9 @@ export default {
     joinSerie() {
       const userStore = useUserStore()
       createGame(userStore.user, this.serie.id).then((game) => {
-        joinGame(game.gameId.id).then(() => {
-          this.$router.push(`/game/${game.gameId.id}`)
+        joinGame(game.gameId).then(() => {
+
+          this.$router.push(`/game/${game.gameId}`)
         })
       })
     },

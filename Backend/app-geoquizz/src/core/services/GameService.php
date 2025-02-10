@@ -66,12 +66,16 @@ class GameService implements GameServiceInterface
 
         $this->gameRepository->save($game);
         $gameDTO = $game->toDTO();
-        $token = $this->jwtGameManager->createGameToken(['id' => $game->getId(), 'userId' => $game->getUserId(), 'serieId' => $game->getSerieId(), 'state' => $game->getState()]);
+        $token = $this->jwtGameManager->createGameToken([
+            'id' => $game->getId(),
+            'userId' => $game->getUserId(),
+            'serieId' => $game->getSerieId(),
+            'state' => $game->getState()
+        ]);
         $refreshToken = $this->jwtGameManager->createGameRefreshToken($game->getId(), $game->getUserId());
         $gameDTO->setToken(['token' => $token, 'refreshToken' => $refreshToken]);
         $this->sendMessageGame("CREATE", $game->getId());
         return $gameDTO;
-        var_dump($gameDTO);
     }
 
     public function isFinished(GameDTO $game): bool

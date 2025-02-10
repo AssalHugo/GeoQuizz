@@ -36,17 +36,15 @@ class JWTGameManager
             $decoded = JWT::decode($token, new Key($this->secret, $this->algo));
             return (array) $decoded;
         } catch (\Exception $e) {
-            throw new \Exception("Invalid game token: " . $e->getMessage() );
+            throw new \Exception("Invalid game token: " . $e->getMessage());
         }
     }
 
-    
+
     public function isValidGameToken(string $token): bool
     {
         try {
             $decoded = $this->decodeGameToken($token);
-            error_log('Decoded token: ' . print_r($decoded, true));
-
             if (isset($decoded['exp']) && $decoded['exp'] < time()) {
                 error_log('Token expired');
                 return false;
@@ -76,7 +74,7 @@ class JWTGameManager
 
         return JWT::encode($payload, $this->secret, $this->algo);
     }
-    
+
     public function createTemporaryToken(string $gameId, int $duration): string
     {
         $payload = [

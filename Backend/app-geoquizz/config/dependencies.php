@@ -103,14 +103,7 @@ return [
         return new JWTGameManager(getenv('JWT_GAME_SECRET_KEY'), 'HS512');
     },
     GameServiceInterface::class => function (ContainerInterface $container) {
-        return new GameService($container->get(GameRepositoryInterface::class), $container->get(SerieDirectusInterface::class), $container->get(JWTGameManager::class));
-    },
-    GameService::class => function (ContainerInterface $container) {
-        return new GameService(
-            $container->get(GameRepositoryInterface::class),
-            $container->get(SerieDirectusInterface::class),
-            $container->get(JWTGameManager::class)
-        );
+        return new GameService($container->get(GameRepositoryInterface::class), $container->get(SerieDirectusInterface::class), $container->get(JWTGameManager::class), $container->get(UserServiceInterface::class), $container->get('rabbitmq'));
     },
     CreateGameAction::class => function (ContainerInterface $container) {
         return new CreateGameAction($container->get(GameServiceInterface::class));

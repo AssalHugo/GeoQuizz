@@ -14,7 +14,6 @@ $c = $builder->build();
 
 $app = AppFactory::createFromContainer($c);
 
-$app->add($c->get(GameMiddleware::class));
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 $app->addErrorMiddleware($c->get('displayErrorDetails'), false, false);

@@ -60,7 +60,8 @@ class GameRepository implements GameRepositoryInterface
      * @throws RepositoryEntityNotFoundException
      * @throws RepositoryException
      */
-    public function findById(string $id): ?Game {
+    public function findById(string $id): ?Game
+    {
         try {
             $game = $this->entityManager->find(Game::class, $id);
         } catch (\Exception $e) {
@@ -106,7 +107,6 @@ class GameRepository implements GameRepositoryInterface
 
                 return (int) $query->getSingleScalarResult();
             }
-
         } catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
             throw new RepositoryConnectionException("Erreur de connexion à la base de données", 503, $e);
         } catch (\Doctrine\ORM\Exception\ORMException $e) {
@@ -121,7 +121,8 @@ class GameRepository implements GameRepositoryInterface
      * Récupère tous les jeux.
      * @throws RepositoryException
      */
-    public function findAll(): array {
+    public function findAll(): array
+    {
         try {
             return $this->entityManager->createQuery("SELECT g FROM api_geoquizz\core\domain\entities\geoquizz\Game g")
                 ->getResult();
